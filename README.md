@@ -60,36 +60,35 @@ Architecture Diagram:
                 |
                 v
 +----------------------------------------------+
-| Controllers                                 |
-| - PageController (server-rendered pages)    |
-| - REST Controllers (/api/**)                |
-+--------------------------+-----------------+
+| Controllers                                   |
+| - PageController (server-rendered pages)      |
+| - REST Controllers (/api/**)                  |
++--------------------------+-------------------+
                            |
                            v
 +----------------------------------------------+
-| Service Layer                                |
-| - AuthService                                |
-| - ProductService                             |
-| - OrderService                               |
-| - CouponService                              |
-+--------------------------+-----------------+
+| Service Layer                                  |
+| - AuthService                                  |
+| - ProductService                               |
+| - OrderService                                 |
+| - CouponService                                |
++--------------------------+-------------------+
                            |
                            v
 +--------------------------------------------+
-| Repository Layer (Spring Data JPA)          |
-| - LoginRepository                           |
-| - ProductRepository                         |
-| - OrdersRepository                          |
-| - CouponRepository                          |
+| Repository Layer (Spring Data JPA)         |
+| - LoginRepository                          |
+| - ProductRepository                        |
+| - OrdersRepository                         |
+| - CouponRepository                         |
 +--------------------------+-----------------+
                            |
                            v
 +----------------------------------------------+
-| H2 / MySQL Database                          |
-| - schema migrations (if using Liquibase)     |
-| - persistent marketplace data                |
+| H2 / MySQL Database                           |
+| - schema migrations (if using Liquibase)      |
+| - persistent marketplace data                 |
 +----------------------------------------------+
-
 
 ## ER Diagram
 
