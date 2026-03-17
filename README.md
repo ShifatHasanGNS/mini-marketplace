@@ -44,51 +44,16 @@ The project follows a standard Spring Boot layered architecture:
 
 Architecture Diagram:
 
+```mermaid
+graph TD
+    A["🌐 Browser / Client<br/>Thymeleaf pages<br/>JS fetch calls"] --> B["🔐 Spring Security Filter Chain<br/>JWT Authentication<br/>Role-based method guards"]
+    B --> C["🎮 Controllers<br/>PageController<br/>REST Controllers"]
+    C --> D["⚙️ Service Layer<br/>AuthService<br/>ProductService<br/>OrderService<br/>CouponService"]
+    D --> E["💾 Repository Layer<br/>Spring Data JPA<br/>LoginRepository<br/>ProductRepository<br/>OrdersRepository<br/>CouponRepository"]
+    E --> F[("🗄️ Database<br/>PostgreSQL/H2<br/>Liquibase migrations")]
+```
 
-+-------------------+
-| Browser / Client  |
-| - Thymeleaf pages |
-| - JS fetch calls  |
-+---------+---------+
-          |
-          v
-+------------------------------+
-| Spring Security Filter Chain |
-| - JWT Authentication Filter  |
-| - Role-based method guards   |
-+---------------+--------------+
-                |
-                v
-+----------------------------------------------+
-| Controllers                                   |
-| - PageController (server-rendered pages)      |
-| - REST Controllers (/api/**)                  |
-+--------------------------+-------------------+
-                           |
-                           v
-+----------------------------------------------+
-| Service Layer                                  |
-| - AuthService                                  |
-| - ProductService                               |
-| - OrderService                                 |
-| - CouponService                                |
-+--------------------------+-------------------+
-                           |
-                           v
-+--------------------------------------------+
-| Repository Layer (Spring Data JPA)         |
-| - LoginRepository                          |
-| - ProductRepository                        |
-| - OrdersRepository                         |
-| - CouponRepository                         |
-+--------------------------+-----------------+
-                           |
-                           v
-+----------------------------------------------+
-| H2 / MySQL Database                           |
-| - schema migrations (if using Liquibase)      |
-| - persistent marketplace data                 |
-+----------------------------------------------+
+---
 
 ## ER Diagram
 
@@ -99,36 +64,48 @@ The database structure consists of the following key entities:
 - Order – Placed by Buyer
 - Coupon – Managed by Admin
 
-ER Diagram:
-
-
-+-------------------+       +-------------------+
-| login             |1-----<| product           |
-|-------------------|       |-------------------|
-| id PK             |       | id PK             |
-| name              |       | name              |
-| password          |       | price             |
-| role              |       | origin            |
-|                   |       | pic               |
-|                   |       | seller_id FK      |
-+-------------------+       +-------------------+
-        |   ^
-        |   |
-        |   |
-        v   |
-+-------------------+       +-------------------+
-| orders            |       | coupon            |
-|-------------------|       |-------------------|
-| id PK             |       | id PK             |
-| buyer_id FK       |>-----1| code              |
-| product_id FK     |       | discount_percentage|
-| status            |       | valid_until       |
-| total_amount      |       +-------------------+
-| tracking_number   |
-| discount_percentage|
-| coupon_id FK      |
-| order_date        |
-+-------------------+
+```mermaid
+erDiagram
+    LOGIN ||--o{ PRODUCT : "1 seller has many"
+    LOGIN ||--o{ ORDERS : "1 buyer places many"
+    PRODUCT ||--o{ ORDERS : "1 product in many"
+    ORDERS ||--|| COUPON : "uses"
+    
+    LOGIN {
+        int id PK
+        string name
+        string password
+        string role
+    }
+    
+    PRODUCT {
+        int id PK
+        string name
+        decimal price
+        string origin
+        string pic
+        int seller_id FK
+    }
+    
+    ORDERS {
+        int id PK
+        int buyer_id FK
+        int product_id FK
+        string status
+        decimal total_amount
+        string tracking_number
+        decimal discount_percentage
+        int coupon_id FK
+        date order_date
+    }
+    
+    COUPON {
+        int id PK
+        string code
+        decimal discount_percentage
+        date valid_until
+    }
+```
 
 ---
 
@@ -145,14 +122,17 @@ ER Diagram:
 
 ## API Endpoints
 
-| Method | Path                                     | Auth     | Role                  | Description                                           
+| Method | Path                                     | Auth     | Role                  | Description                                           |
 |--------|-----------------------------------------|----------|----------------------|-------------------------------------------------------|
 | GET    | /login                                  | Public   | All                  | Show login page                                       |
 | GET    | /signup                                 | Public   | All                  | Show signup page                                      |
 | POST   | /signup                                 | Public   | All                  | Register a new user (buyer or seller)                 |
 | GET    | /redirect-dashboard                     | Required | All                  | Redirect user to dashboard based on role              |
 
-| **Admin Endpoints** |                                                                                                                              
+### Admin Endpoints
+
+| Method | Path                                     | Auth     | Role                  | Description                                           |
+|--------|-----------------------------------------|----------|----------------------|-------------------------------------------------------|
 | GET    | /admin                                   | Required | ADMIN                | Redirect to admin dashboard                          |
 | GET    | /admin/dashboard                         | Required | ADMIN                | View admin dashboard                                 |
 | GET    | /admin/users                             | Required | ADMIN                | View all users                                       |
@@ -164,7 +144,10 @@ ER Diagram:
 | DELETE | /admin/coupons/{id}                      | Required | ADMIN                | Delete a coupon by ID                                |
 | GET    | /admin/sales                             | Required | ADMIN                | View sales summary and top sellers                   |
 
-| **Seller Endpoints** |                                                                                                                             
+### Seller Endpoints
+
+| Method | Path                                     | Auth     | Role                  | Description                                           |
+|--------|-----------------------------------------|----------|----------------------|-------------------------------------------------------|
 | GET    | /seller/dashboard/{username}             | Required | SELLER               | View seller dashboard                                |
 | GET    | /seller/products/{username}              | Required | SELLER               | View seller's products                               |
 | POST   | /seller/products                         | Required | SELLER               | Add a new product                                    |
@@ -172,7 +155,10 @@ ER Diagram:
 | DELETE | /seller/products/{id}                    | Required | SELLER               | Delete a product by ID                               |
 | GET    | /seller/orders/{username}                | Required | SELLER               | View orders received for the seller                  |
 
-| **Buyer Endpoints**  |                                                                                                                             
+### Buyer Endpoints
+
+| Method | Path                                     | Auth     | Role                  | Description                                           |
+|--------|-----------------------------------------|----------|----------------------|-------------------------------------------------------|
 | GET    | /buyer/dashboard/{username}              | Required | BUYER                | View buyer dashboard                                  |
 | GET    | /buyer/products/{username}               | Required | BUYER                | Browse all products                                   |
 | GET    | /buyer/cart/{username}                   | Required | BUYER                | View cart contents                                    |
@@ -200,7 +186,7 @@ ER Diagram:
 | Containerization| Docker + Docker Compose                           |
 | CI/CD           | GitHub Actions + Render deploy hook               |
 
-
+---
 
 ## Run Instructions 
 
@@ -208,16 +194,21 @@ ER Diagram:
  
  1. Clone the Repository
 
+```bash
 git clone https://github.com/ShifatHasanGNS/mini-marketplace.git
 cd mini-marketplace
-
+```
 
 2. Build the Docker Image
 
-  docker build -t mini-marketplace .
+```bash
+docker build -t mini-marketplace .
+```
 
 3. Run the Application with Docker
 
-  docker run -p 8080:8080 mini-marketplace
+```bash
+docker run -p 8080:8080 mini-marketplace
+```
 
-  The application will start at: http://localhost:8080
+The application will start at: http://localhost:8080
