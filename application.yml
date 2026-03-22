@@ -1,14 +1,13 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:${DATABASE_URL}}
-    username: ${JDBC_DATABASE_USERNAME:studentuser}
-    password: ${JDBC_DATABASE_PASSWORD:studentpass}
-    driver-class-name: org.postgresql.Driver
-  
+    url: ${JDBC_DATABASE_URL:${DATABASE_URL:jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}}
+    username: ${JDBC_DATABASE_USERNAME:sa}
+    password: ${JDBC_DATABASE_PASSWORD:}
+    driver-class-name: ${JDBC_DATABASE_DRIVER:org.h2.Driver}
   jpa:
     hibernate:
-      ddl-auto: ${DB_JPA_HIBERNATE_DDL_AUTO:none}
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: ${DB_JPA_HIBERNATE_DDL_AUTO:update}
+    database-platform: ${DB_JPA_DATABASE_PLATFORM:org.hibernate.dialect.H2Dialect}
     show-sql: true
     properties:
       hibernate:
