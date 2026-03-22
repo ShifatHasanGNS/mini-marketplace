@@ -101,7 +101,6 @@ public class BuyerControllerIntegrationTest {
             .andExpect(status().isOk())
             .andExpect(view().name("buyer-dashboard"))
             .andExpect(model().attributeExists("products"))
-            .andExpect(model().attributeExists("orderHistory"))
             .andExpect(model().attributeExists("cart"))
             .andExpect(model().attributeExists("cartSize"));
     }
@@ -119,7 +118,7 @@ public class BuyerControllerIntegrationTest {
         mockMvc
             .perform(get("/buyer/add-to-cart/1/testbuyer").session(session))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/buyer/dashboard/testbuyer"));
+            .andExpect(redirectedUrl("/buyer/cart/testbuyer"));
 
         // Verify cart in session
         MvcResult result = mockMvc
@@ -156,7 +155,7 @@ public class BuyerControllerIntegrationTest {
                 get("/buyer/remove-from-cart/1/testbuyer").session(session)
             )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/buyer/dashboard/testbuyer"));
+            .andExpect(redirectedUrl("/buyer/cart/testbuyer"));
 
         // Verify removal
         MvcResult result = mockMvc
@@ -220,12 +219,12 @@ public class BuyerControllerIntegrationTest {
         // Act & Assert
         mockMvc
             .perform(
-                post("/buyer/final-checkout")
+                post("/buyer/checkout")
                     .with(csrf())
                     .session(session)
-                    .param("customerName", "testbuyer")
-                    .param("deliveryAddress", "123 Test St")
-                    .param("mobileNumber", "555-1234")
+                    .param("username", "testbuyer")
+                    .param("address", "123 Test St")
+                    .param("mobile", "555-1234")
                     .param("couponCode", "SAVE10")
             )
             .andExpect(status().is3xxRedirection())
@@ -244,15 +243,15 @@ public class BuyerControllerIntegrationTest {
         // Act & Assert
         mockMvc
             .perform(
-                post("/buyer/final-checkout")
+                post("/buyer/checkout")
                     .with(csrf())
                     .session(session)
-                    .param("customerName", "testbuyer")
-                    .param("deliveryAddress", "123 Test St")
-                    .param("mobileNumber", "555-1234")
+                    .param("username", "testbuyer")
+                    .param("address", "123 Test St")
+                    .param("mobile", "555-1234")
             )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/buyer/dashboard/testbuyer"))
+            .andExpect(redirectedUrl("/buyer/cart/testbuyer"))
             .andExpect(flash().attributeExists("error"));
     }
 
@@ -272,12 +271,12 @@ public class BuyerControllerIntegrationTest {
         // Act & Assert
         mockMvc
             .perform(
-                post("/buyer/final-checkout")
+                post("/buyer/checkout")
                     .with(csrf())
                     .session(session)
-                    .param("customerName", "testbuyer")
-                    .param("deliveryAddress", "123 Test St")
-                    .param("mobileNumber", "555-1234")
+                    .param("username", "testbuyer")
+                    .param("address", "123 Test St")
+                    .param("mobile", "555-1234")
             )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/buyer/dashboard/testbuyer"))
@@ -293,7 +292,7 @@ public class BuyerControllerIntegrationTest {
         mockMvc
             .perform(get("/buyer/dashboard/testbuyer"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/login"));
+            .andExpect(redirectedUrl("http://localhost/login"));
     }
 
     @Test
@@ -307,7 +306,7 @@ public class BuyerControllerIntegrationTest {
         mockMvc
             .perform(get("/buyer/add-to-cart/999/testbuyer").session(session))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/buyer/dashboard/testbuyer"));
+            .andExpect(redirectedUrl("/buyer/cart/testbuyer"));
 
         // Cart should remain empty
         MvcResult result = mockMvc

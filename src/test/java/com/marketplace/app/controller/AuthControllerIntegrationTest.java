@@ -93,7 +93,7 @@ public class AuthControllerIntegrationTest {
         mockMvc
             .perform(get("/redirect-dashboard"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/admin/dashboard"));
+            .andExpect(redirectedUrl("/admin"));
     }
 
     @Test

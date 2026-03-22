@@ -104,7 +104,7 @@ public class SellerControllerIntegrationTest {
         // Act & Assert
         mockMvc
             .perform(
-                post("/seller/add-product")
+                post("/seller/products")
                     .with(csrf())
                     .session(session)
                     .param("name", "New Product")
@@ -129,7 +129,7 @@ public class SellerControllerIntegrationTest {
         // Act & Assert
         mockMvc
             .perform(
-                post("/seller/edit-product/1")
+                put("/seller/products/1")
                     .with(csrf())
                     .session(session)
                     .param("name", "Updated Product")
@@ -151,7 +151,7 @@ public class SellerControllerIntegrationTest {
 
         // Act & Assert
         mockMvc
-            .perform(get("/seller/delete-product/1").session(session))
+            .perform(delete("/seller/products/1").session(session))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/seller/dashboard/test_seller"));
 
@@ -187,7 +187,7 @@ public class SellerControllerIntegrationTest {
         // The controller will still redirect even with missing fields
         mockMvc
             .perform(
-                post("/seller/add-product")
+                post("/seller/products")
                     .with(csrf())
                     .session(session)
                     .param("name", "New Product")
@@ -241,7 +241,7 @@ public class SellerControllerIntegrationTest {
         mockMvc
             .perform(get("/seller/dashboard/test_seller"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/login"));
+            .andExpect(redirectedUrl("http://localhost/login"));
     }
 
     @Test
@@ -250,7 +250,7 @@ public class SellerControllerIntegrationTest {
         // Act & Assert
         mockMvc
             .perform(
-                post("/seller/add-product")
+                post("/seller/products")
                     .with(csrf())
                     .session(session)
                     .param("name", "New Product")
@@ -269,7 +269,7 @@ public class SellerControllerIntegrationTest {
         // Act & Assert - Only updating name, other fields remain
         mockMvc
             .perform(
-                post("/seller/edit-product/1")
+                put("/seller/products/1")
                     .with(csrf())
                     .session(session)
                     .param("name", "Updated Name Only")
@@ -326,7 +326,7 @@ public class SellerControllerIntegrationTest {
 
         // Act & Assert
         mockMvc
-            .perform(get("/seller/delete-product/999").session(session))
+            .perform(delete("/seller/products/999").session(session))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/seller/dashboard/test_seller"));
 

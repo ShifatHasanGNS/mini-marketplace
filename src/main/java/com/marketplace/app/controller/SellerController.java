@@ -57,7 +57,7 @@ public class SellerController {
 
         sellerService.addProduct(product);
 
-        return "redirect:/seller/products/" + sellerName;
+        return "redirect:/seller/dashboard/" + sellerName;
     }
 
     // ================= UPDATE PRODUCT =================
@@ -74,7 +74,7 @@ public class SellerController {
 
         sellerService.updateProduct(product);
 
-        return "redirect:/seller/products/" + sellerName;
+        return "redirect:/seller/dashboard/" + sellerName;
     }
 
     // ================= DELETE PRODUCT =================
@@ -84,7 +84,7 @@ public class SellerController {
 
         sellerService.deleteProduct(id);
 
-        return "redirect:/seller/products/" + sellerName;
+        return "redirect:/seller/dashboard/" + sellerName;
     }
 
     // ================= HELPER =================

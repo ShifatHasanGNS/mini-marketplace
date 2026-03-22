@@ -171,7 +171,7 @@ public class AdminControllerIntegrationTest {
 
         // Act & Assert
         mockMvc
-            .perform(get("/admin/delete/{id}", userId))
+            .perform(delete("/admin/users/{id}", userId))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/admin/dashboard"));
 
@@ -191,7 +191,7 @@ public class AdminControllerIntegrationTest {
         // Act & Assert
         mockMvc
             .perform(
-                post("/admin/add-coupon")
+                post("/admin/coupons")
                     .with(csrf())
                     .param("code", "NEWYEAR25")
                     .param("discountPercentage", "25")
@@ -218,7 +218,7 @@ public class AdminControllerIntegrationTest {
         // Act & Assert
         mockMvc
             .perform(
-                post("/admin/edit-coupon/{id}", couponId)
+                put("/admin/coupons/{id}", couponId)
                     .with(csrf())
                     .param("code", "UPDATED20")
                     .param("discountPercentage", "20")
@@ -238,7 +238,7 @@ public class AdminControllerIntegrationTest {
 
         // Act & Assert
         mockMvc
-            .perform(get("/admin/delete-coupon/{id}", couponId))
+            .perform(delete("/admin/coupons/{id}", couponId))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/admin/dashboard"));
 
@@ -270,7 +270,7 @@ public class AdminControllerIntegrationTest {
 
         // Act & Assert
         mockMvc
-            .perform(get("/admin/edit-coupon/{id}", couponId))
+            .perform(get("/admin/coupons/{id}", couponId))
             .andExpect(status().isOk())
             .andExpect(view().name("admin-dashboard"))
             .andExpect(model().attributeExists("users"))
@@ -297,7 +297,7 @@ public class AdminControllerIntegrationTest {
 
         // Act & Assert
         mockMvc
-            .perform(get("/admin/edit-coupon/{id}", invalidId))
+            .perform(get("/admin/coupons/{id}", invalidId))
             .andExpect(status().isOk())
             .andExpect(view().name("admin-dashboard"))
             .andExpect(model().attributeExists("coupon"))
@@ -358,7 +358,7 @@ public class AdminControllerIntegrationTest {
         // Act & Assert - Only updating code, discount remains same
         mockMvc
             .perform(
-                post("/admin/edit-coupon/{id}", couponId)
+                put("/admin/coupons/{id}", couponId)
                     .with(csrf())
                     .param("code", "NEWCODE")
                     .param("discountPercentage", "10")
@@ -376,6 +376,6 @@ public class AdminControllerIntegrationTest {
         mockMvc
             .perform(get("/admin/dashboard"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/login"));
+            .andExpect(redirectedUrl("http://localhost/login"));
     }
 }

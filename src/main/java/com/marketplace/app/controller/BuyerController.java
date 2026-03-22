@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/buyer")
@@ -199,13 +199,15 @@ public class BuyerController {
         @RequestParam String address,
         @RequestParam String mobile,
         @RequestParam(required = false) String couponCode,
-        HttpSession session
+        HttpSession session,
+        RedirectAttributes redirectAttributes
     ) {
         List<Product> cart = (List<Product>) session.getAttribute("cart");
 
-        if (cart == null || cart.isEmpty()) return (
-            "redirect:/buyer/cart/" + username
-        );
+        if (cart == null || cart.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Cart is empty");
+            return "redirect:/buyer/cart/" + username;
+        }
 
         double discount = 0;
 
@@ -236,6 +238,7 @@ public class BuyerController {
 
         session.removeAttribute("cart");
 
+        redirectAttributes.addFlashAttribute("success", "Order placed successfully!");
         return "redirect:/buyer/dashboard/" + username + "?success=true";
     }
 }
