@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Marketplace Admin</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+            rel="stylesheet"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            body {
+                background: #f1f5f9;
+                font-family: Segoe UI;
+            }
+            .sidebar {
+                background: #1e293b;
+                min-height: 100vh;
+                color: white;
+            }
+            .sidebar h4 {
+                padding: 20px;
+            }
+            .sidebar a {
+                display: block;
+                color: white;
+                padding: 12px 20px;
+                text-decoration: none;
+                transition: 0.3s;
+            }
+            .sidebar a:hover {
+                background: #334155;
+                padding-left: 25px;
+            }
+            .main {
+                padding: 25px;
+            }
+            .card {
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            }
+            .stat-card {
+                color: white;
+            }
+            .bg-users {
+                background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            }
+            .bg-buyers {
+                background: linear-gradient(45deg, #22c55e, #15803d);
+            }
+            .bg-sellers {
+                background: linear-gradient(45deg, #f59e0b, #b45309);
+            }
+            .bg-revenue {
+                background: linear-gradient(45deg, #ef4444, #b91c1c);
+            }
+            .table {
+                background: white;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+            .section {
+                display: none;
+            }
+            .section.active {
+                display: block;
+                animation: fade 0.4s;
+            }
+            @keyframes fade {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            .rank-card {
+                padding: 15px;
+                border-radius: 10px;
+                margin-bottom: 10px;
+                background: #f8fafc;
+                display: flex;
+                justify-content: space-between;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- SIDEBAR -->
+                <div class="col-md-2 sidebar">
+                    <h4><i class="fa fa-chart-line"></i> Admin</h4>
+                    <a th:href="@{/admin/dashboard}">Dashboard</a>
+                    <a th:href="@{/admin/users}">Users</a>
+                    <a th:href="@{/admin/coupons}">Coupons</a>
+                    <a th:href="@{/admin/sales}">Sales</a>
+                    <a th:href="@{/logout}">Logout</a>
+                </div>
+
+                <!-- MAIN -->
+                <div class="col-md-10 main">
+                    <!-- DASHBOARD SECTION -->
+                    <div id="dashboardSection" class="section">
+                        <h3 class="mb-4">Marketplace Overview</h3>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="card stat-card bg-users p-3">
+                                    <h6><i class="fa fa-users"></i> Users</h6>
+                                    <h3 th:text="${users.size()}">0</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stat-card bg-buyers p-3">
+                                    <h6>Buyers</h6>
+                                    <h3
+                                        th:text="${#lists.size(users.?[role=='BUYER'])}"
+                                    >
+                                        0
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stat-card bg-sellers p-3">
+                                    <h6>Sellers</h6>
+                                    <h3
+                                        th:text="${#lists.size(users.?[role=='SELLER'])}"
+                                    >
+                                        0
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stat-card bg-revenue p-3">
+                                    <h6>Total Sales</h6>
+                                    <h3 th:text="${totalSelling}">0</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-8">
+                                <div class="card p-3">
+                                    <h5>Top Seller Sales</h5>
+                                    <canvas id="salesChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card p-3">
+                                    <h5>Top Sellers</h5>
+                                    <div
+                                        th:each="s:${topSellers}"
+                                        class="rank-card"
+                                    >
+                                        <div>
+                                            <strong th:text="${s.key}"></strong>
+                                        </div>
+                                        <div>
+                                            ৳ <span th:text="${s.value}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- USERS SECTION -->
+                    <div id="usersSection" class="section">
+                        <h4>All Users</h4>
+                        <table class="table table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="u:${users}">
+                                    <td th:text="${u.id}"></td>
+                                    <td th:text="${u.name}"></td>
+                                    <td th:text="${u.role}"></td>
+                                    <td>
+                                        <form
+                                            th:action="@{'/admin/users/' + ${u.id}}"
+                                            method="post"
+                                            onsubmit="
+                                                return confirm('Delete user?');
+                                            "
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="_method"
+                                                value="delete"
+                                            />
+                                            <button
+                                                class="btn btn-sm btn-danger"
+                                                type="submit"
+                                            >
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- COUPONS SECTION -->
+                    <div id="couponSection" class="section">
+                        <h4
+                            th:text="${coupon.id != null ? 'Edit Coupon' : 'Create Coupon'}"
+                        ></h4>
+                        <form
+                            th:action="@{${coupon.id != null ? '/admin/coupons/' + coupon.id : '/admin/coupons'}}"
+                            method="post"
+                        >
+                            <input
+                                type="hidden"
+                                name="_method"
+                                th:value="${coupon.id != null ? 'put' : 'post'}"
+                            />
+                            <input
+                                type="hidden"
+                                name="id"
+                                th:value="${coupon.id}"
+                                th:if="${coupon.id != null}"
+                            />
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input
+                                        class="form-control"
+                                        name="code"
+                                        placeholder="Coupon Code"
+                                        th:value="${coupon.code}"
+                                        required
+                                    />
+                                </div>
+                                <div class="col-md-3">
+                                    <input
+                                        class="form-control"
+                                        name="discountPercentage"
+                                        placeholder="Discount %"
+                                        th:value="${coupon.discountPercentage}"
+                                        required
+                                    />
+                                </div>
+                                <div class="col-md-3">
+                                    <input
+                                        type="date"
+                                        class="form-control"
+                                        name="validUntil"
+                                        th:value="${coupon.validUntil}"
+                                        required
+                                    />
+                                </div>
+                                <div class="col-md-3">
+                                    <button
+                                        class="btn btn-success"
+                                        th:text="${coupon.id != null ? 'Update Coupon' : 'Add Coupon'}"
+                                    >
+                                        Add Coupon
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr />
+                        <table class="table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Code</th>
+                                    <th>Discount</th>
+                                    <th>Valid Until</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c:${coupons}">
+                                    <td th:text="${c.id}"></td>
+                                    <td th:text="${c.code}"></td>
+                                    <td th:text="${c.discountPercentage}"></td>
+                                    <td th:text="${c.validUntil}"></td>
+                                    <td>
+                                        <a
+                                            th:href="@{'/admin/coupons/' + ${c.id}}"
+                                            class="btn btn-warning btn-sm"
+                                            >Edit</a
+                                        >
+                                        <form
+                                            th:action="@{'/admin/coupons/' + ${c.id}}"
+                                            method="post"
+                                            style="display: inline"
+                                            onsubmit="
+                                                return confirm(
+                                                    'Delete coupon?',
+                                                );
+                                            "
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="_method"
+                                                value="delete"
+                                            />
+                                            <button
+                                                class="btn btn-danger btn-sm"
+                                                type="submit"
+                                            >
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- SALES SECTION -->
+                    <div id="sellSection" class="section">
+                        <h4>Orders</h4>
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Mobile</th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Seller</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="o:${orders}">
+                                    <td th:text="${o.customerName}"></td>
+                                    <td th:text="${o.mobileNumber}"></td>
+                                    <td th:text="${o.productName}"></td>
+                                    <td th:text="${o.price}"></td>
+                                    <td th:text="${o.sellerName}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            const sections = {
+                dashboard: document.getElementById("dashboardSection"),
+                users: document.getElementById("usersSection"),
+                coupon: document.getElementById("couponSection"),
+                sell: document.getElementById("sellSection"),
+            };
+            let activeSection = /*[[${activeSection}]]*/ "dashboard";
+            Object.values(sections).forEach((s) =>
+                s.classList.remove("active"),
+            );
+            sections[activeSection].classList.add("active");
+        </script>
+
+        <script th:inline="javascript">
+            let sellers = [[${topSellers}]];
+            let labels = [];
+            let values = [];
+            sellers.forEach(s => { labels.push(s.key); values.push(s.value); });
+            new Chart(document.getElementById("salesChart"), {
+                type: "bar",
+                data: { labels: labels, datasets: [{ label: "Sales", data: values }] }
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: ${JDBC_DATABASE_URL:${DATABASE_URL}}
+    username: ${JDBC_DATABASE_USERNAME:studentuser}
+    password: ${JDBC_DATABASE_PASSWORD:studentpass}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: ${DB_JPA_HIBERNATE_DDL_AUTO:none}
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false
+
+server:
+  port: ${PORT:8080}

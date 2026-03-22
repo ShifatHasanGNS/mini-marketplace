@@ -1,0 +1,31 @@
+services:
+    postgres:
+        image: postgres:15
+        container_name: marketplace-db
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${JDBC_DATABASE_USERNAME}
+            POSTGRES_PASSWORD: ${JDBC_DATABASE_PASSWORD}
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+
+    app:
+        build: .
+        platform: linux/amd64
+        container_name: mini-marketplace-app
+        ports:
+            - "8080:8080"
+        depends_on:
+            - postgres
+        environment:
+            JDBC_DATABASE_URL: ${JDBC_DATABASE_URL}
+            JDBC_DATABASE_USERNAME: ${JDBC_DATABASE_USERNAME}
+            JDBC_DATABASE_PASSWORD: ${JDBC_DATABASE_PASSWORD}
+            DATABASE_URL: ${DATABASE_URL}
+            DB_JPA_HIBERNATE_DDL_AUTO: ${DB_JPA_HIBERNATE_DDL_AUTO}
+            PORT: ${PORT}
+
+volumes:
+    postgres-data:
