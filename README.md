@@ -1,5 +1,6 @@
 # Mini Marketplace
 
+[![CI](https://github.com/ShifatHasanGNS/mini-marketplace/actions/workflows/ci.yml/badge.svg)](https://github.com/ShifatHasanGNS/mini-marketplace/actions/workflows/ci.yml)
 [![Java](https://img.shields.io/badge/Java-17-orange)](https://www.java.com/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)](https://www.postgresql.org/)
@@ -293,3 +294,70 @@ The application will start at: http://localhost:8080
 - **Port binding error**: Ensure `PORT` env var is set (Render provides it automatically)
 - **Build fails**: Check logs → mvn clean package command and Dockerfile
 - **App starts but no connection**: Ensure Postgres service is linked or DATABASE_URL is correct
+
+---
+
+## CI/CD Workflow
+
+This project uses GitHub Actions for continuous integration and deployment.
+
+### GitHub Actions Workflow
+
+The CI pipeline is defined in `.github/workflows/ci.yml` and runs on every push and pull request to the `main` branch.
+
+**Workflow Steps:**
+
+1. **Checkout Code**: Clones the repository
+2. **Setup JDK 17**: Configures Java 17 with Temurin distribution
+3. **Cache Maven Dependencies**: Speeds up builds by caching Maven packages
+4. **Run Tests**: Executes unit and integration tests with `./mvnw test`
+5. **Build Application**: Packages the application with `./mvnw clean package -DskipTests`
+6. **Build Docker Image**: Creates a Docker image for deployment
+
+### Deployment
+
+- **Automatic Deployment**: Render auto-deploys on push to `main` branch
+- **Manual Deployment**: Can be triggered from Render dashboard
+- **Environment**: Production deployment uses environment variables for configuration
+
+---
+
+## Pipeline
+
+The CI/CD pipeline ensures code quality and automated deployment:
+
+```mermaid
+graph LR
+    A[Push/PR to main] --> B[GitHub Actions CI]
+    B --> C[Run Tests]
+    C --> D[Build JAR]
+    D --> E[Build Docker Image]
+    E --> F[Deploy to Render]
+    F --> G[Live Application]
+```
+
+**Pipeline Benefits:**
+
+- Automated testing prevents bugs
+- Consistent builds across environments
+- Fast feedback on code changes
+- Seamless deployment to production
+
+---
+
+## Branch Strategy
+
+This project follows a simple Git branching strategy:
+
+- **`main`**: Production-ready code, auto-deploys to Render
+- **Feature Branches**: For new features, named `feature/description`
+- **Bugfix Branches**: For bug fixes, named `bugfix/issue-description`
+
+**Workflow:**
+
+1. Create feature/bugfix branch from `main`
+2. Develop and commit changes
+3. Push branch and create pull request
+4. CI runs tests on PR
+5. Merge to `main` after review
+6. Auto-deployment triggers
