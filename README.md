@@ -1,6 +1,18 @@
 # Mini Marketplace
 
-A Spring Boot project that provides a full-featured mini marketplace. The platform supports three roles: Admin, Seller, and Buyer, each with specific permissions and functionalities.
+[![Java](https://img.shields.io/badge/Java-17-orange)](https://www.java.com/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-Enabled-blue)](https://www.docker.com/)
+[![Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7)](https://render.com/)
+
+A Spring Boot project that provides a full-featured mini marketplace. The platform supports three roles: **Admin**, **Seller**, and **Buyer**, each with specific permissions and functionalities.
+
+## 🚀 Live Demo
+
+**Access the live application here:** [https://mini-marketplace-ympg.onrender.com/login](https://mini-marketplace-ympg.onrender.com/login)
+
+Test the features by signing up as a Buyer, Seller, or Admin.
 
 ---
 
@@ -261,7 +273,7 @@ The application will start at: http://localhost:8080
 
 7. **Verify**
    - Wait for build and deployment to complete
-   - Visit your app URL: `https://<your-service-name>.onrender.com/login`
+   - Visit your app URL: `https://mini-marketplace-ympg.onrender.com/login`
    - Test login, signup, and dashboard flows
 
 ### Environment Variables for Render
