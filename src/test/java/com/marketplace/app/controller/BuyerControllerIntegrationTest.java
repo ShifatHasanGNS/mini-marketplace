@@ -228,7 +228,7 @@ public class BuyerControllerIntegrationTest {
                     .param("couponCode", "SAVE10")
             )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/buyer/dashboard/testbuyer"))
+            .andExpect(redirectedUrl("/buyer/dashboard/testbuyer?success=true"))
             .andExpect(flash().attributeExists("success"));
 
         verify(orderRepository, times(1)).save(any(Order.class));
@@ -279,7 +279,7 @@ public class BuyerControllerIntegrationTest {
                     .param("mobile", "555-1234")
             )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/buyer/dashboard/testbuyer"))
+            .andExpect(redirectedUrl("/buyer/dashboard/testbuyer?success=true"))
             .andExpect(flash().attributeExists("success"));
 
         verify(orderRepository, times(1)).save(any(Order.class));

@@ -46,6 +46,7 @@ public class BuyerController {
         if (cart == null) cart = new ArrayList<>();
 
         session.setAttribute("cart", cart);
+        model.addAttribute("cart", cart);
 
         List<Product> products = productRepository.findAll();
         model.addAttribute("products", products);
