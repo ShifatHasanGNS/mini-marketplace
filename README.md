@@ -10,7 +10,7 @@ A Spring Boot project that provides a full-featured mini marketplace. The platfo
 
 ## 🚀 Live Demo
 
-**Access the live application here:** [https://mini-marketplace-ympg.onrender.com/login](https://mini-marketplace-ympg.onrender.com/login)
+**Access the live application here:** [https://mini-marketplace-ympg.onrender.com](https://mini-marketplace-ympg.onrender.com)
 
 Test the features by signing up as a Buyer, Seller, or Admin.
 
@@ -273,7 +273,7 @@ The application will start at: http://localhost:8080
 
 7. **Verify**
    - Wait for build and deployment to complete
-   - Visit your app URL: `https://mini-marketplace-ympg.onrender.com/login`
+   - Visit your app URL: `https://mini-marketplace-ympg.onrender.com`
    - Test login, signup, and dashboard flows
 
 ### Environment Variables for Render
