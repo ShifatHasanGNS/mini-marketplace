@@ -17,7 +17,6 @@ A Spring Boot project that provides a full-featured mini marketplace. The platfo
 - [Pipeline](#pipeline)
 - [Branch Strategy](#branch-strategy)
 - [Render Deployment](#render-deployment)
-- [License](#license)
 
 ---
 
@@ -282,9 +281,3 @@ The application will start at: http://localhost:8080
 - **Port binding error**: Ensure `PORT` env var is set (Render provides it automatically)
 - **Build fails**: Check logs → mvn clean package command and Dockerfile
 - **App starts but no connection**: Ensure Postgres service is linked or DATABASE_URL is correct
-
----
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
