@@ -53,8 +53,9 @@ public class SellerController {
         HttpSession session
     ) {
         String sellerName = (String) session.getAttribute("username");
-        product.setSellerName(sellerName);
+        if (sellerName == null) return "redirect:/login";
 
+        product.setSellerName(sellerName);
         sellerService.addProduct(product);
 
         return "redirect:/seller/dashboard/" + sellerName;
@@ -68,10 +69,10 @@ public class SellerController {
         HttpSession session
     ) {
         String sellerName = (String) session.getAttribute("username");
+        if (sellerName == null) return "redirect:/login";
 
         product.setId(id);
         product.setSellerName(sellerName);
-
         sellerService.updateProduct(product);
 
         return "redirect:/seller/dashboard/" + sellerName;
@@ -81,6 +82,7 @@ public class SellerController {
     @DeleteMapping("/products/{id}")
     public String deleteProduct(@PathVariable Long id, HttpSession session) {
         String sellerName = (String) session.getAttribute("username");
+        if (sellerName == null) return "redirect:/login";
 
         sellerService.deleteProduct(id);
 
@@ -89,9 +91,7 @@ public class SellerController {
 
     // ================= HELPER =================
     private void populateModel(String username, Model model) {
-        List<Product> products = sellerService.getProductsBySellerName(
-            username
-        );
+        List<Product> products = sellerService.getProductsBySellerName(username);
         model.addAttribute("products", products);
 
         List<Order> myOrders = sellerService.getOrdersBySellerName(username);
