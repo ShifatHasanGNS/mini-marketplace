@@ -3,12 +3,19 @@ package com.marketplace.app.controller;
 import com.marketplace.app.entity.Order;
 import com.marketplace.app.entity.Product;
 import com.marketplace.app.service.SellerService;
+
 import jakarta.servlet.http.HttpSession;
+
 import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * SellerController
+ * Handles seller dashboard, products, and orders
+ */
 @Controller
 @RequestMapping("/seller")
 public class SellerController {
@@ -19,41 +26,49 @@ public class SellerController {
         this.sellerService = sellerService;
     }
 
-    // ================= DASHBOARD =================
+    // ===================== DASHBOARD =====================
     @GetMapping("/dashboard/{username}")
     public String dashboard(@PathVariable String username, Model model) {
+
         populateModel(username, model);
         model.addAttribute("activeSection", "dashboard");
 
         return "seller-dashboard";
     }
 
-    // ================= PRODUCTS =================
+    // ===================== PRODUCTS =====================
     @GetMapping("/products/{username}")
     public String products(@PathVariable String username, Model model) {
+
         populateModel(username, model);
         model.addAttribute("activeSection", "products");
 
         return "seller-dashboard";
     }
 
-    // ================= ORDERS =================
+    // ===================== ORDERS =====================
     @GetMapping("/orders/{username}")
     public String orders(@PathVariable String username, Model model) {
+
         populateModel(username, model);
         model.addAttribute("activeSection", "orders");
 
         return "seller-dashboard";
     }
 
-    // ================= ADD PRODUCT =================
+    // ===================== ADD PRODUCT =====================
     @PostMapping("/products")
     public String addProduct(
-        @ModelAttribute Product product,
-        HttpSession session
+            @ModelAttribute Product product,
+            HttpSession session
     ) {
+
         String sellerName = (String) session.getAttribute("username");
-        if (sellerName == null) return "redirect:/login";
+
+        // Redirect if user not logged in
+        if (sellerName == null) {
+            return "redirect:/login";
+        }
 
         product.setSellerName(sellerName);
         sellerService.addProduct(product);
@@ -61,48 +76,68 @@ public class SellerController {
         return "redirect:/seller/dashboard/" + sellerName;
     }
 
-    // ================= UPDATE PRODUCT =================
+    // ===================== UPDATE PRODUCT =====================
     @PutMapping("/products/{id}")
     public String editProduct(
-        @PathVariable Long id,
-        @ModelAttribute Product product,
-        HttpSession session
+            @PathVariable Long id,
+            @ModelAttribute Product product,
+            HttpSession session
     ) {
+
         String sellerName = (String) session.getAttribute("username");
-        if (sellerName == null) return "redirect:/login";
+
+        // Redirect if session expired
+        if (sellerName == null) {
+            return "redirect:/login";
+        }
 
         product.setId(id);
         product.setSellerName(sellerName);
+
         sellerService.updateProduct(product);
 
         return "redirect:/seller/dashboard/" + sellerName;
     }
 
-    // ================= DELETE PRODUCT =================
+    // ===================== DELETE PRODUCT =====================
     @DeleteMapping("/products/{id}")
     public String deleteProduct(@PathVariable Long id, HttpSession session) {
+
         String sellerName = (String) session.getAttribute("username");
-        if (sellerName == null) return "redirect:/login";
+
+        // Security check: ensure user is logged in
+        if (sellerName == null) {
+            return "redirect:/login";
+        }
 
         sellerService.deleteProduct(id);
 
         return "redirect:/seller/dashboard/" + sellerName;
     }
 
-    // ================= HELPER =================
+    // ===================== HELPER METHOD =====================
+    /**
+     * Populates common data for seller dashboard
+     */
     private void populateModel(String username, Model model) {
+
+        // Fetch seller products
         List<Product> products = sellerService.getProductsBySellerName(username);
         model.addAttribute("products", products);
 
+        // Fetch seller orders
         List<Order> myOrders = sellerService.getOrdersBySellerName(username);
         model.addAttribute("myOrders", myOrders);
 
+        // Calculate total selling amount
         double totalSelling = myOrders
-            .stream()
-            .mapToDouble(Order::getPrice)
-            .sum();
+                .stream()
+                .mapToDouble(Order::getPrice)
+                .sum();
+
         model.addAttribute("totalSelling", totalSelling);
 
+        // Common attributes
         model.addAttribute("sellerName", username);
         model.addAttribute("product", new Product());
     }
