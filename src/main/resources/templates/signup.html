@@ -1,153 +1,140 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Mini Marketplace - Sign Up</title>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-            rel="stylesheet"
-        />
-        <style>
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-                font-family: "Roboto", sans-serif;
-            }
 
-            body {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-                background: linear-gradient(135deg, #667eea, #764ba2);
-            }
+<head>
+    <meta charset="UTF-8" />
+    <title>Mini Marketplace - Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Roboto", sans-serif;
+        }
 
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .signup-container {
+            background-color: #fff;
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            width: 360px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .signup-container:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #333;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            position: relative;
+            margin: 15px 0;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 14px 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition:
+                background 0.3s,
+                transform 0.2s;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #5a67d8, #6b46c1);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .login-link {
+            display: block;
+            margin-top: 18px;
+            color: #555;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .login-link:hover {
+            color: #667eea;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 400px) {
             .signup-container {
-                background-color: #fff;
-                padding: 50px 40px;
-                border-radius: 16px;
-                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-                width: 360px;
-                text-align: center;
-                transition: transform 0.3s;
+                width: 90%;
+                padding: 40px 20px;
             }
+        }
+    </style>
+</head>
 
-            .signup-container:hover {
-                transform: translateY(-5px);
-            }
+<body>
+    <div class="signup-container">
+        <h2>Mini Marketplace Sign Up</h2>
+        <form th:action="@{/signup}" method="post">
+            <div class="input-group">
+                <input type="text" name="name" placeholder="Username" required />
+            </div>
+            <div class="input-group">
+                <input type="password" name="password" placeholder="Password" required />
+            </div>
+            <div class="input-group">
+                <select name="role" required>
+                    <option value="">Select Role</option>
+                    <option value="SELLER">Seller</option>
+                    <option value="BUYER">Buyer</option>
+                </select>
+            </div>
+            <button type="submit">Sign Up</button>
+        </form>
 
-            h2 {
-                margin-bottom: 25px;
-                color: #333;
-                font-weight: 700;
-                letter-spacing: 1px;
-            }
+        <p class="error-message" th:text="${error}"></p>
+        <a class="login-link" th:href="@{/login}">Already have an account? Login</a>
+    </div>
+</body>
 
-            .input-group {
-                position: relative;
-                margin: 15px 0;
-            }
-
-            .input-group input,
-            .input-group select {
-                width: 100%;
-                padding: 14px 14px;
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                transition: all 0.3s;
-            }
-
-            .input-group input:focus,
-            .input-group select:focus {
-                border-color: #667eea;
-                box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
-                outline: none;
-            }
-
-            button {
-                width: 100%;
-                padding: 14px;
-                margin-top: 20px;
-                border: none;
-                border-radius: 8px;
-                background: linear-gradient(90deg, #667eea, #764ba2);
-                color: #fff;
-                font-weight: 600;
-                cursor: pointer;
-                transition:
-                    background 0.3s,
-                    transform 0.2s;
-            }
-
-            button:hover {
-                background: linear-gradient(90deg, #5a67d8, #6b46c1);
-                transform: translateY(-2px);
-            }
-
-            .error-message {
-                color: red;
-                margin-top: 12px;
-                font-size: 14px;
-            }
-
-            .login-link {
-                display: block;
-                margin-top: 18px;
-                color: #555;
-                font-size: 14px;
-                text-decoration: none;
-                transition: color 0.3s;
-            }
-
-            .login-link:hover {
-                color: #667eea;
-                text-decoration: underline;
-            }
-
-            @media (max-width: 400px) {
-                .signup-container {
-                    width: 90%;
-                    padding: 40px 20px;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="signup-container">
-            <h2>Mini Marketplace Sign Up</h2>
-            <form th:action="@{/signup}" method="post">
-                <div class="input-group">
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="Username"
-                        required
-                    />
-                </div>
-                <div class="input-group">
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        required
-                    />
-                </div>
-                <div class="input-group">
-                    <select name="role" required>
-                        <option value="">Select Role</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="SELLER">Seller</option>
-                        <option value="BUYER">Buyer</option>
-                    </select>
-                </div>
-                <button type="submit">Sign Up</button>
-            </form>
-
-            <p class="error-message" th:text="${error}"></p>
-            <a class="login-link" th:href="@{/login}"
-                >Already have an account? Login</a
-            >
-        </div>
-    </body>
 </html>
