@@ -6,14 +6,21 @@ import com.marketplace.app.entity.Product;
 import com.marketplace.app.repository.CouponRepository;
 import com.marketplace.app.repository.OrderRepository;
 import com.marketplace.app.repository.ProductRepository;
+
 import jakarta.servlet.http.HttpSession;
+
 import java.time.LocalDate;
 import java.util.*;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * BuyerController
+ * Handles buyer dashboard, cart, orders, and checkout
+ */
 @Controller
 @RequestMapping("/buyer")
 public class BuyerController {
@@ -23,27 +30,30 @@ public class BuyerController {
     private final OrderRepository orderRepository;
 
     public BuyerController(
-        ProductRepository productRepository,
-        CouponRepository couponRepository,
-        OrderRepository orderRepository
+            ProductRepository productRepository,
+            CouponRepository couponRepository,
+            OrderRepository orderRepository
     ) {
         this.productRepository = productRepository;
         this.couponRepository = couponRepository;
         this.orderRepository = orderRepository;
     }
 
-    // ================= DASHBOARD =================
+    // ===================== DASHBOARD =====================
     @GetMapping("/dashboard/{username}")
     public String dashboard(
-        @PathVariable String username,
-        @RequestParam(required = false) String success,
-        Model model,
-        HttpSession session
+            @PathVariable String username,
+            @RequestParam(required = false) String success,
+            Model model,
+            HttpSession session
     ) {
+
         session.setAttribute("username", username);
 
         List<Product> cart = (List<Product>) session.getAttribute("cart");
-        if (cart == null) cart = new ArrayList<>();
+        if (cart == null) {
+            cart = new ArrayList<>();
+        }
 
         session.setAttribute("cart", cart);
         model.addAttribute("cart", cart);
@@ -64,18 +74,18 @@ public class BuyerController {
 
         for (Order o : orders) {
             sellerCount.put(
-                o.getSellerName(),
-                sellerCount.getOrDefault(o.getSellerName(), 0) + 1
+                    o.getSellerName(),
+                    sellerCount.getOrDefault(o.getSellerName(), 0) + 1
             );
         }
 
         List<String> topSellers = sellerCount
-            .entrySet()
-            .stream()
-            .sorted((a, b) -> b.getValue() - a.getValue())
-            .limit(3)
-            .map(Map.Entry::getKey)
-            .toList();
+                .entrySet()
+                .stream()
+                .sorted((a, b) -> b.getValue() - a.getValue())
+                .limit(3)
+                .map(Map.Entry::getKey)
+                .toList();
 
         model.addAttribute("topSellers", topSellers);
 
@@ -89,17 +99,20 @@ public class BuyerController {
         return "buyer-dashboard";
     }
 
-    // ================= PRODUCTS =================
+    // ===================== PRODUCTS =====================
     @GetMapping("/products/{username}")
     public String products(
-        @PathVariable String username,
-        Model model,
-        HttpSession session
+            @PathVariable String username,
+            Model model,
+            HttpSession session
     ) {
+
         List<Product> products = productRepository.findAll();
 
         List<Product> cart = (List<Product>) session.getAttribute("cart");
-        if (cart == null) cart = new ArrayList<>();
+        if (cart == null) {
+            cart = new ArrayList<>();
+        }
 
         model.addAttribute("products", products);
         model.addAttribute("cartSize", cart.size());
@@ -108,15 +121,18 @@ public class BuyerController {
         return "buyer-dashboard";
     }
 
-    // ================= CART =================
+    // ===================== CART =====================
     @GetMapping("/cart/{username}")
     public String cart(
-        @PathVariable String username,
-        Model model,
-        HttpSession session
+            @PathVariable String username,
+            Model model,
+            HttpSession session
     ) {
+
         List<Product> cart = (List<Product>) session.getAttribute("cart");
-        if (cart == null) cart = new ArrayList<>();
+        if (cart == null) {
+            cart = new ArrayList<>();
+        }
 
         model.addAttribute("cart", cart);
         model.addAttribute("username", username);
@@ -125,49 +141,52 @@ public class BuyerController {
         return "buyer-dashboard";
     }
 
-    // ================= ADD TO CART =================
+    // ===================== ADD TO CART =====================
     @GetMapping("/add-to-cart/{id}/{username}")
     public String addToCart(
-        @PathVariable Long id,
-        @PathVariable String username,
-        HttpSession session
+            @PathVariable Long id,
+            @PathVariable String username,
+            HttpSession session
     ) {
+
         Product product = productRepository.findById(id).orElse(null);
 
         if (product != null) {
             List<Product> cart = (List<Product>) session.getAttribute("cart");
 
-            if (cart == null) cart = new ArrayList<>();
+            if (cart == null) {
+                cart = new ArrayList<>();
+            }
 
             cart.add(product);
-
             session.setAttribute("cart", cart);
         }
 
         return "redirect:/buyer/cart/" + username;
     }
 
-    // ================= REMOVE FROM CART =================
+    // ===================== REMOVE FROM CART =====================
     @GetMapping("/remove-from-cart/{id}/{username}")
     public String removeFromCart(
-        @PathVariable Long id,
-        @PathVariable String username,
-        HttpSession session
+            @PathVariable Long id,
+            @PathVariable String username,
+            HttpSession session
     ) {
+
         List<Product> cart = (List<Product>) session.getAttribute("cart");
 
         if (cart != null) {
             cart.removeIf(p -> p.getId().equals(id));
-
             session.setAttribute("cart", cart);
         }
 
         return "redirect:/buyer/cart/" + username;
     }
 
-    // ================= ORDER HISTORY =================
+    // ===================== ORDER HISTORY =====================
     @GetMapping("/orders/{username}")
     public String orderHistory(@PathVariable String username, Model model) {
+
         List<Order> orders = orderRepository.findByCustomerName(username);
 
         model.addAttribute("orders", orders);
@@ -176,10 +195,11 @@ public class BuyerController {
         return "buyer-dashboard";
     }
 
-    // ================= CHECK COUPON =================
+    // ===================== CHECK COUPON =====================
     @GetMapping("/check-coupon")
     @ResponseBody
     public Map<String, Object> checkCoupon(@RequestParam String code) {
+
         Map<String, Object> response = new HashMap<>();
 
         Coupon coupon = couponRepository.findByCode(code);
@@ -194,16 +214,17 @@ public class BuyerController {
         return response;
     }
 
-    // ================= CHECKOUT =================
+    // ===================== CHECKOUT =====================
     @PostMapping("/checkout")
     public String checkout(
-        @RequestParam String username,
-        @RequestParam String address,
-        @RequestParam String mobile,
-        @RequestParam(required = false) String couponCode,
-        HttpSession session,
-        RedirectAttributes redirectAttributes
+            @RequestParam String username,
+            @RequestParam String address,
+            @RequestParam String mobile,
+            @RequestParam(required = false) String couponCode,
+            HttpSession session,
+            RedirectAttributes redirectAttributes
     ) {
+
         List<Product> cart = (List<Product>) session.getAttribute("cart");
 
         if (cart == null || cart.isEmpty()) {
@@ -216,12 +237,15 @@ public class BuyerController {
         if (couponCode != null && !couponCode.isEmpty()) {
             Coupon coupon = couponRepository.findByCode(couponCode);
 
-            if (coupon != null) discount = coupon.getDiscountPercentage();
+            if (coupon != null) {
+                discount = coupon.getDiscountPercentage();
+            }
         }
 
         for (Product p : cart) {
+
             double finalPrice =
-                p.getPrice() - ((p.getPrice() * discount) / 100);
+                    p.getPrice() - ((p.getPrice() * discount) / 100);
 
             Order order = new Order();
 
@@ -241,6 +265,7 @@ public class BuyerController {
         session.removeAttribute("cart");
 
         redirectAttributes.addFlashAttribute("success", "Order placed successfully!");
+
         return "redirect:/buyer/dashboard/" + username + "?success=true";
     }
 }
