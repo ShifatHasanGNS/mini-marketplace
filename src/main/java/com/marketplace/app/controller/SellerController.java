@@ -14,7 +14,13 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * SellerController
- * Handles seller dashboard, products, and orders
+ *
+ * Handles all seller-related operations for Mini Marketplace:
+ * - Seller dashboard
+ * - Products management (add, update, delete)
+ * - Orders management
+ *
+ * Base URL: /seller
  */
 @Controller
 @RequestMapping("/seller")
@@ -27,6 +33,10 @@ public class SellerController {
     }
 
     // ===================== DASHBOARD =====================
+
+    /**
+     * Seller dashboard view
+     */
     @GetMapping("/dashboard/{username}")
     public String dashboard(@PathVariable String username, Model model) {
 
@@ -37,6 +47,10 @@ public class SellerController {
     }
 
     // ===================== PRODUCTS =====================
+
+    /**
+     * View seller products
+     */
     @GetMapping("/products/{username}")
     public String products(@PathVariable String username, Model model) {
 
@@ -47,6 +61,10 @@ public class SellerController {
     }
 
     // ===================== ORDERS =====================
+
+    /**
+     * View seller orders
+     */
     @GetMapping("/orders/{username}")
     public String orders(@PathVariable String username, Model model) {
 
@@ -57,6 +75,10 @@ public class SellerController {
     }
 
     // ===================== ADD PRODUCT =====================
+
+    /**
+     * Add a new product
+     */
     @PostMapping("/products")
     public String addProduct(
             @ModelAttribute Product product,
@@ -65,7 +87,6 @@ public class SellerController {
 
         String sellerName = (String) session.getAttribute("username");
 
-        // Redirect if user not logged in
         if (sellerName == null) {
             return "redirect:/login";
         }
@@ -77,6 +98,10 @@ public class SellerController {
     }
 
     // ===================== UPDATE PRODUCT =====================
+
+    /**
+     * Update an existing product
+     */
     @PutMapping("/products/{id}")
     public String editProduct(
             @PathVariable Long id,
@@ -86,7 +111,6 @@ public class SellerController {
 
         String sellerName = (String) session.getAttribute("username");
 
-        // Redirect if session expired
         if (sellerName == null) {
             return "redirect:/login";
         }
@@ -100,12 +124,15 @@ public class SellerController {
     }
 
     // ===================== DELETE PRODUCT =====================
+
+    /**
+     * Delete a product by ID
+     */
     @DeleteMapping("/products/{id}")
     public String deleteProduct(@PathVariable Long id, HttpSession session) {
 
         String sellerName = (String) session.getAttribute("username");
 
-        // Security check: ensure user is logged in
         if (sellerName == null) {
             return "redirect:/login";
         }
@@ -116,6 +143,7 @@ public class SellerController {
     }
 
     // ===================== HELPER METHOD =====================
+
     /**
      * Populates common data for seller dashboard
      */
@@ -134,7 +162,6 @@ public class SellerController {
                 .stream()
                 .mapToDouble(Order::getPrice)
                 .sum();
-
         model.addAttribute("totalSelling", totalSelling);
 
         // Common attributes

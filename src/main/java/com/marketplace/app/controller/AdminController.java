@@ -16,8 +16,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * AdminController
- * Handles admin dashboard, users, coupons, and sales
+ * Controller responsible for handling all administrative operations
+ * within the Mini Marketplace application.
+ *
+ * Features handled:
+ * - Admin dashboard
+ * - User management
+ * - Coupon CRUD operations
+ * - Sales overview and analytics
+ *
+ * Base route: /admin
  */
 @Controller
 @RequestMapping("/admin")
@@ -32,13 +40,31 @@ public class AdminController {
     @Autowired
     private OrderRepository orderRepository;
 
-    // ===================== REDIRECT BASE =====================
+    // =====================================================
+    // BASE REDIRECTION
+    // =====================================================
+
+    /**
+     * Redirects the base admin route to the dashboard page.
+     *
+     * @return redirect path to admin dashboard
+     */
     @GetMapping
     public String redirectToDashboard() {
         return "redirect:/admin/dashboard";
     }
 
-    // ===================== DASHBOARD =====================
+    // =====================================================
+    // DASHBOARD ROUTES
+    // =====================================================
+
+    /**
+     * Loads the main admin dashboard with users, coupons,
+     * orders, sales data, and summary statistics.
+     *
+     * @param model Spring UI model
+     * @return dashboard view
+     */
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
 
@@ -48,7 +74,16 @@ public class AdminController {
         return "admin-dashboard";
     }
 
-    // ===================== USERS =====================
+    // =====================================================
+    // USER MANAGEMENT
+    // =====================================================
+
+    /**
+     * Displays all registered non-admin users.
+     *
+     * @param model Spring UI model
+     * @return admin dashboard with user section active
+     */
     @GetMapping("/users")
     public String viewUsers(Model model) {
 
@@ -58,7 +93,12 @@ public class AdminController {
         return "admin-dashboard";
     }
 
-    // Delete user by ID
+    /**
+     * Deletes a user by their unique ID.
+     *
+     * @param id user ID
+     * @return redirect to admin dashboard
+     */
     @DeleteMapping("/users/{id}")
     public String deleteUser(@PathVariable Long id) {
 
@@ -67,7 +107,16 @@ public class AdminController {
         return "redirect:/admin/dashboard";
     }
 
-    // ===================== COUPONS =====================
+    // =====================================================
+    // COUPON MANAGEMENT
+    // =====================================================
+
+    /**
+     * Displays all available coupons.
+     *
+     * @param model Spring UI model
+     * @return admin dashboard with coupon section active
+     */
     @GetMapping("/coupons")
     public String viewCoupons(Model model) {
 
@@ -77,7 +126,12 @@ public class AdminController {
         return "admin-dashboard";
     }
 
-    // Create new coupon
+    /**
+     * Creates and stores a new coupon.
+     *
+     * @param coupon coupon entity from form
+     * @return redirect to admin dashboard
+     */
     @PostMapping("/coupons")
     public String createCoupon(@ModelAttribute Coupon coupon) {
 
@@ -86,12 +140,19 @@ public class AdminController {
         return "redirect:/admin/dashboard";
     }
 
-    // Edit coupon
+    /**
+     * Loads coupon edit form for a specific coupon.
+     *
+     * @param id coupon ID
+     * @param model Spring UI model
+     * @return dashboard view with edit modal/form open
+     */
     @GetMapping("/coupons/{id}")
     public String editCoupon(@PathVariable Long id, Model model) {
 
         populateModel(model);
 
+        // Fetch coupon if exists, otherwise return empty coupon object
         Coupon coupon = couponRepository.findById(id).orElse(new Coupon());
 
         model.addAttribute("coupon", coupon);
@@ -101,7 +162,13 @@ public class AdminController {
         return "admin-dashboard";
     }
 
-    // Update coupon
+    /**
+     * Updates an existing coupon.
+     *
+     * @param id coupon ID
+     * @param coupon updated coupon data
+     * @return redirect to admin dashboard
+     */
     @PutMapping("/coupons/{id}")
     public String updateCoupon(
             @PathVariable Long id,
@@ -114,7 +181,12 @@ public class AdminController {
         return "redirect:/admin/dashboard";
     }
 
-    // Delete coupon
+    /**
+     * Deletes a coupon by ID.
+     *
+     * @param id coupon ID
+     * @return redirect to admin dashboard
+     */
     @DeleteMapping("/coupons/{id}")
     public String deleteCoupon(@PathVariable Long id) {
 
@@ -123,7 +195,16 @@ public class AdminController {
         return "redirect:/admin/dashboard";
     }
 
-    // ===================== SALES =====================
+    // =====================================================
+    // SALES MANAGEMENT
+    // =====================================================
+
+    /**
+     * Displays sales summary and analytics section.
+     *
+     * @param model Spring UI model
+     * @return admin dashboard with sales section active
+     */
     @GetMapping("/sales")
     public String viewSales(Model model) {
 
@@ -133,32 +214,52 @@ public class AdminController {
         return "admin-dashboard";
     }
 
-    // ===================== HELPER METHOD =====================
+    // =====================================================
+    // HELPER METHODS
+    // =====================================================
+
     /**
-     * Loads all required data for admin dashboard
+     * Populates the model with all required data for
+     * admin dashboard rendering.
+     *
+     * Includes:
+     * - users
+     * - coupons
+     * - orders
+     * - total sales
+     * - top sellers
+     *
+     * @param model Spring UI model
      */
     private void populateModel(Model model) {
 
+        // Fetch all non-admin users
         List<Login> users = loginRepository.findByRoleNot("ADMIN");
+
+        // Fetch all coupons
         List<Coupon> coupons = couponRepository.findAll();
+
+        // Fetch all orders
         List<Order> orders = orderRepository.findAll();
 
-        // Calculate total selling
+        // Calculate total sales amount
         double totalSelling = orders
                 .stream()
                 .mapToDouble(Order::getPrice)
                 .sum();
 
-        // Calculate top sellers
+        // Aggregate seller-wise sales
         Map<String, Double> sellerMap = new HashMap<>();
 
-        for (Order o : orders) {
+        for (Order order : orders) {
             sellerMap.put(
-                    o.getSellerName(),
-                    sellerMap.getOrDefault(o.getSellerName(), 0.0) + o.getPrice()
+                    order.getSellerName(),
+                    sellerMap.getOrDefault(order.getSellerName(), 0.0)
+                            + order.getPrice()
             );
         }
 
+        // Sort sellers by total sales and keep top 5
         List<Map.Entry<String, Double>> topSellers = sellerMap
                 .entrySet()
                 .stream()
@@ -166,7 +267,7 @@ public class AdminController {
                 .limit(5)
                 .collect(Collectors.toList());
 
-        // Add attributes to model
+        // Add all required attributes to view model
         model.addAttribute("users", users);
         model.addAttribute("coupons", coupons);
         model.addAttribute("orders", orders);
