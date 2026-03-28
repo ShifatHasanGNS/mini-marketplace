@@ -9,12 +9,22 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.OperatingSystemMXBean;
 
+/**
+ * HealthCheckController
+ *
+ * Provides multiple health-check endpoints for the Mini Marketplace application.
+ * Includes basic, system, memory, CPU, database, cache, external API checks,
+ * as well as utility endpoints for version, environment, threads, and time.
+ *
+ * Base route: /api/health
+ */
 @RestController
 @RequestMapping("/api/health")
 public class HealthCheckController {
 
     // ================= BASIC HEALTH =================
 
+    /** Basic health check endpoint */
     @GetMapping
     public ResponseEntity<Map<String, Object>> basicHealth() {
         Map<String, Object> response = new HashMap<>();
@@ -24,11 +34,13 @@ public class HealthCheckController {
         return ResponseEntity.ok(response);
     }
 
+    /** Simple ping endpoint */
     @GetMapping("/ping")
     public ResponseEntity<String> ping() {
         return ResponseEntity.ok("pong");
     }
 
+    /** Detailed status with uptime and Java version */
     @GetMapping("/status")
     public ResponseEntity<Map<String, Object>> detailedStatus() {
         Map<String, Object> response = new HashMap<>();
@@ -41,6 +53,7 @@ public class HealthCheckController {
 
     // ================= SYSTEM INFO =================
 
+    /** Returns OS info */
     @GetMapping("/system")
     public ResponseEntity<Map<String, Object>> systemInfo() {
         Map<String, Object> data = new HashMap<>();
@@ -51,31 +64,30 @@ public class HealthCheckController {
         return ResponseEntity.ok(data);
     }
 
+    /** Returns memory usage info */
     @GetMapping("/memory")
     public ResponseEntity<Map<String, Object>> memoryInfo() {
         MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-
         Map<String, Object> memory = new HashMap<>();
         memory.put("heapUsed", memoryMXBean.getHeapMemoryUsage().getUsed());
         memory.put("heapMax", memoryMXBean.getHeapMemoryUsage().getMax());
         memory.put("nonHeapUsed", memoryMXBean.getNonHeapMemoryUsage().getUsed());
-
         return ResponseEntity.ok(memory);
     }
 
+    /** Returns CPU load info */
     @GetMapping("/cpu")
     public ResponseEntity<Map<String, Object>> cpuInfo() {
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
-
         Map<String, Object> cpu = new HashMap<>();
         cpu.put("loadAverage", osBean.getSystemLoadAverage());
         cpu.put("availableProcessors", osBean.getAvailableProcessors());
-
         return ResponseEntity.ok(cpu);
     }
 
     // ================= MOCK CHECKS =================
 
+    /** Mock database check */
     @GetMapping("/db-check")
     public ResponseEntity<Map<String, String>> databaseCheck() {
         Map<String, String> result = new HashMap<>();
@@ -84,6 +96,7 @@ public class HealthCheckController {
         return ResponseEntity.ok(result);
     }
 
+    /** Mock cache check */
     @GetMapping("/cache-check")
     public ResponseEntity<Map<String, String>> cacheCheck() {
         Map<String, String> result = new HashMap<>();
@@ -92,6 +105,7 @@ public class HealthCheckController {
         return ResponseEntity.ok(result);
     }
 
+    /** Mock external API check */
     @GetMapping("/external-api")
     public ResponseEntity<Map<String, String>> externalApiCheck() {
         Map<String, String> result = new HashMap<>();
@@ -102,29 +116,29 @@ public class HealthCheckController {
 
     // ================= ADVANCED HEALTH =================
 
+    /** Full health summary combining all endpoints */
     @GetMapping("/full")
     public ResponseEntity<Map<String, Object>> fullHealth() {
         Map<String, Object> health = new HashMap<>();
-
         health.put("basic", basicHealth().getBody());
         health.put("system", systemInfo().getBody());
         health.put("memory", memoryInfo().getBody());
         health.put("cpu", cpuInfo().getBody());
         health.put("db", databaseCheck().getBody());
         health.put("cache", cacheCheck().getBody());
-
         health.put("timestamp", LocalDateTime.now());
         health.put("overallStatus", "UP");
-
         return ResponseEntity.ok(health);
     }
 
     // ================= UTILITY METHODS =================
 
+    /** Returns JVM uptime in milliseconds */
     private long getUptime() {
         return ManagementFactory.getRuntimeMXBean().getUptime();
     }
 
+    /** Build a standard response map with timestamp */
     private Map<String, Object> buildResponse(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key, value);
@@ -132,7 +146,7 @@ public class HealthCheckController {
         return map;
     }
 
-    // ================= EXTRA ENDPOINTS FOR SIZE =================
+    // ================= EXTRA ENDPOINTS =================
 
     @GetMapping("/version")
     public ResponseEntity<Map<String, String>> version() {
@@ -185,7 +199,7 @@ public class HealthCheckController {
         return ResponseEntity.ok(summary);
     }
 
-    // Duplicate-style endpoints to increase size but still meaningful
+    // ================= DUPLICATE / EXTRA CHECKS =================
 
     @GetMapping("/check1")
     public ResponseEntity<String> check1() { return ResponseEntity.ok("OK"); }
