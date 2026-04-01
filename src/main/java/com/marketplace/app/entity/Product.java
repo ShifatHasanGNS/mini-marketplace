@@ -1,45 +1,70 @@
-package com.marketplace.app.entity; // Package where entity classes are stored
+package com.marketplace.app.entity;
 
-import jakarta.persistence.*; // Import JPA annotations for mapping Java objects to database tables
+import jakarta.persistence.*;
 
-// Mark this class as a JPA entity
+/**
+ * Product Entity
+ * 
+ * Represents a product in the Mini Marketplace system.
+ * Stores product details including name, price, origin, image reference, and seller information.
+ * Each product is mapped to a database table and can be managed by sellers.
+ * 
+ * @author Mini Marketplace Team
+ * @version 1.0
+ */
 @Entity
-// Specify the database table name for this entity
 @Table(name = "product")
 public class Product {
 
-    // Primary key of the product table
+    /**
+     * Unique identifier for the product
+     * Auto-generated primary key in the database
+     */
     @Id
-    // Auto-generate the ID value using database identity strategy
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Product name
+    /**
+     * Name of the product
+     */
     private String name;
 
-    // Product price
+    /**
+     * Price of the product
+     */
     private Double price;
 
-    // Product origin (e.g., country or location)
+    /**
+     * Origin/source of the product (country or location)
+     */
     private String origin;
 
-    // URL or path to product image
+    /**
+     * Image URL or file path for product image
+     */
     private String pic;
 
-    // Seller who owns this product
+    /**
+     * Name of the seller who owns this product
+     */
     private String sellerName;
 
-    // Default constructor required by JPA
-    public Product() {}
+    /**
+     * Default constructor required by JPA for entity instantiation
+     */
+    public Product() {
+    }
 
-    // Constructor to initialize all fields
-    public Product(
-        String name,
-        Double price,
-        String origin,
-        String pic,
-        String sellerName
-    ) {
+    /**
+     * Constructor to initialize all product fields
+     * 
+     * @param name        the product name
+     * @param price       the product price
+     * @param origin      the product origin
+     * @param pic         the product image path
+     * @param sellerName  the seller's username
+     */
+    public Product(String name, Double price, String origin, String pic, String sellerName) {
         this.name = name;
         this.price = price;
         this.origin = origin;
@@ -47,62 +72,110 @@ public class Product {
         this.sellerName = sellerName;
     }
 
-    // Getter for product ID
+    /**
+     * Gets the product ID
+     * 
+     * @return the unique product identifier
+     */
     public Long getId() {
         return id;
     }
 
-    // Setter for product ID
+    /**
+     * Sets the product ID
+     * 
+     * @param id the product identifier to set
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    // Getter for product name
+    /**
+     * Gets the product name
+     * 
+     * @return the product name
+     */
     public String getName() {
         return name;
     }
 
-    // Setter for product name
+    /**
+     * Sets the product name
+     * 
+     * @param name the product name to set
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-    // Getter for product price
+    /**
+     * Gets the product price
+     * 
+     * @return the product price
+     */
     public Double getPrice() {
         return price;
     }
 
-    // Setter for product price
+    /**
+     * Sets the product price
+     * 
+     * @param price the product price to set
+     */
     public void setPrice(Double price) {
         this.price = price;
     }
 
-    // Getter for product origin
+    /**
+     * Gets the product origin
+     * 
+     * @return the product origin/source
+     */
     public String getOrigin() {
         return origin;
     }
 
-    // Setter for product origin
+    /**
+     * Sets the product origin
+     * 
+     * @param origin the product origin to set
+     */
     public void setOrigin(String origin) {
         this.origin = origin;
     }
 
-    // Getter for product image path/URL
+    /**
+     * Gets the product image path
+     * 
+     * @return the image URL or file path
+     */
     public String getPic() {
         return pic;
     }
 
-    // Setter for product image path/URL
+    /**
+     * Sets the product image path
+     * 
+     * @param pic the image URL or file path to set
+     */
     public void setPic(String pic) {
         this.pic = pic;
     }
 
-    // Getter for seller name
+    /**
+     * Gets the seller's username who owns this product
+     * 
+     * @return the seller name
+     */
     public String getSellerName() {
         return sellerName;
     }
 
-    // Setter for seller name
+    /**
+     * Sets the seller's username for this product
+     * 
+     * @param sellerName the seller name to set
+     */
     public void setSellerName(String sellerName) {
         this.sellerName = sellerName;
     }
