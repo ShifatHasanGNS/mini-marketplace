@@ -1,8 +1,7 @@
-package com.example.minimarketplace.controller;
+package com.marketplace.app.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.*;
 import java.lang.management.ManagementFactory;
@@ -11,20 +10,26 @@ import java.lang.management.OperatingSystemMXBean;
 
 /**
  * HealthCheckController
- *
- * Provides multiple health-check endpoints for the Mini Marketplace application.
- * Includes basic, system, memory, CPU, database, cache, external API checks,
- * as well as utility endpoints for version, environment, threads, and time.
- *
+ * 
+ * Provides comprehensive health-check and monitoring endpoints for the Mini Marketplace application.
+ * Includes system status, resource usage, and dependency health checks.
+ * Useful for application monitoring and health verification in production environments.
+ * 
  * Base route: /api/health
+ * 
+ * @author Mini Marketplace Team
+ * @version 1.0
  */
 @RestController
 @RequestMapping("/api/health")
 public class HealthCheckController {
 
-    // ================= BASIC HEALTH =================
-
-    /** Basic health check endpoint */
+    /**
+     * Basic health check endpoint
+     * Returns simple UP status with current timestamp
+     * 
+     * @return response with status, timestamp, and service name
+     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> basicHealth() {
         Map<String, Object> response = new HashMap<>();
@@ -34,13 +39,22 @@ public class HealthCheckController {
         return ResponseEntity.ok(response);
     }
 
-    /** Simple ping endpoint */
+    /**
+     * Ping endpoint for simple connectivity check
+     * 
+     * @return "pong" response string
+     */
     @GetMapping("/ping")
     public ResponseEntity<String> ping() {
         return ResponseEntity.ok("pong");
     }
 
-    /** Detailed status with uptime and Java version */
+    /**
+     * Detailed status endpoint with JVM information
+     * Includes uptime and Java version
+     * 
+     * @return response with detailed status information
+     */
     @GetMapping("/status")
     public ResponseEntity<Map<String, Object>> detailedStatus() {
         Map<String, Object> response = new HashMap<>();
@@ -51,9 +65,12 @@ public class HealthCheckController {
         return ResponseEntity.ok(response);
     }
 
-    // ================= SYSTEM INFO =================
-
-    /** Returns OS info */
+    /**
+     * System information endpoint
+     * Returns operating system and processor details
+     * 
+     * @return response with OS, version, architecture, and processor count
+     */
     @GetMapping("/system")
     public ResponseEntity<Map<String, Object>> systemInfo() {
         Map<String, Object> data = new HashMap<>();
@@ -64,7 +81,12 @@ public class HealthCheckController {
         return ResponseEntity.ok(data);
     }
 
-    /** Returns memory usage info */
+    /**
+     * Memory usage endpoint
+     * Returns JVM heap and non-heap memory information
+     * 
+     * @return response with heap used, heap max, and non-heap used values
+     */
     @GetMapping("/memory")
     public ResponseEntity<Map<String, Object>> memoryInfo() {
         MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
@@ -75,7 +97,12 @@ public class HealthCheckController {
         return ResponseEntity.ok(memory);
     }
 
-    /** Returns CPU load info */
+    /**
+     * CPU information endpoint
+     * Returns CPU load and available processor information
+     * 
+     * @return response with system load average and processor count
+     */
     @GetMapping("/cpu")
     public ResponseEntity<Map<String, Object>> cpuInfo() {
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
@@ -85,9 +112,12 @@ public class HealthCheckController {
         return ResponseEntity.ok(cpu);
     }
 
-    // ================= MOCK CHECKS =================
-
-    /** Mock database check */
+    /**
+     * Database connectivity check
+     * Returns mock database status
+     * 
+     * @return response with database connection status
+     */
     @GetMapping("/db-check")
     public ResponseEntity<Map<String, String>> databaseCheck() {
         Map<String, String> result = new HashMap<>();
@@ -96,7 +126,12 @@ public class HealthCheckController {
         return ResponseEntity.ok(result);
     }
 
-    /** Mock cache check */
+    /**
+     * Cache availability check
+     * Returns mock cache status
+     * 
+     * @return response with cache availability status
+     */
     @GetMapping("/cache-check")
     public ResponseEntity<Map<String, String>> cacheCheck() {
         Map<String, String> result = new HashMap<>();
@@ -105,7 +140,12 @@ public class HealthCheckController {
         return ResponseEntity.ok(result);
     }
 
-    /** Mock external API check */
+    /**
+     * External API reachability check
+     * Returns mock external API status
+     * 
+     * @return response with external service status
+     */
     @GetMapping("/external-api")
     public ResponseEntity<Map<String, String>> externalApiCheck() {
         Map<String, String> result = new HashMap<>();
@@ -114,9 +154,12 @@ public class HealthCheckController {
         return ResponseEntity.ok(result);
     }
 
-    // ================= ADVANCED HEALTH =================
-
-    /** Full health summary combining all endpoints */
+    /**
+     * Complete health summary endpoint
+     * Combines information from all health checks
+     * 
+     * @return comprehensive response with all health metrics
+     */
     @GetMapping("/full")
     public ResponseEntity<Map<String, Object>> fullHealth() {
         Map<String, Object> health = new HashMap<>();
@@ -131,23 +174,12 @@ public class HealthCheckController {
         return ResponseEntity.ok(health);
     }
 
-    // ================= UTILITY METHODS =================
-
-    /** Returns JVM uptime in milliseconds */
-    private long getUptime() {
-        return ManagementFactory.getRuntimeMXBean().getUptime();
-    }
-
-    /** Build a standard response map with timestamp */
-    private Map<String, Object> buildResponse(String key, Object value) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(key, value);
-        map.put("time", LocalDateTime.now());
-        return map;
-    }
-
-    // ================= EXTRA ENDPOINTS =================
-
+    /**
+     * Application version endpoint
+     * Returns application name and version information
+     * 
+     * @return response with version details
+     */
     @GetMapping("/version")
     public ResponseEntity<Map<String, String>> version() {
         return ResponseEntity.ok(Map.of(
@@ -157,6 +189,12 @@ public class HealthCheckController {
         ));
     }
 
+    /**
+     * Environment information endpoint
+     * Returns Java home and user environment variables
+     * 
+     * @return response with environment details
+     */
     @GetMapping("/env")
     public ResponseEntity<Map<String, String>> environment() {
         Map<String, String> env = new HashMap<>();
@@ -165,6 +203,12 @@ public class HealthCheckController {
         return ResponseEntity.ok(env);
     }
 
+    /**
+     * Thread information endpoint
+     * Returns active thread count and current thread name
+     * 
+     * @return response with thread information
+     */
     @GetMapping("/thread")
     public ResponseEntity<Map<String, Object>> threadInfo() {
         Map<String, Object> thread = new HashMap<>();
@@ -173,6 +217,12 @@ public class HealthCheckController {
         return ResponseEntity.ok(thread);
     }
 
+    /**
+     * Current time and timezone endpoint
+     * Returns server current time and timezone information
+     * 
+     * @return response with time and timezone
+     */
     @GetMapping("/time")
     public ResponseEntity<Map<String, Object>> time() {
         return ResponseEntity.ok(Map.of(
@@ -181,15 +231,12 @@ public class HealthCheckController {
         ));
     }
 
-    @GetMapping("/random-check")
-    public ResponseEntity<Map<String, Object>> randomCheck() {
-        Random random = new Random();
-        return ResponseEntity.ok(Map.of(
-                "value", random.nextInt(100),
-                "status", "OK"
-        ));
-    }
-
+    /**
+     * Health summary endpoint
+     * Provides quick list of performed health checks
+     * 
+     * @return response with overall health status and check list
+     */
     @GetMapping("/health-summary")
     public ResponseEntity<Map<String, Object>> summary() {
         Map<String, Object> summary = new HashMap<>();
@@ -199,36 +246,26 @@ public class HealthCheckController {
         return ResponseEntity.ok(summary);
     }
 
-    // ================= DUPLICATE / EXTRA CHECKS =================
+    /**
+     * Helper method to get JVM uptime
+     * 
+     * @return uptime in milliseconds
+     */
+    private long getUptime() {
+        return ManagementFactory.getRuntimeMXBean().getUptime();
+    }
 
-    @GetMapping("/check1")
-    public ResponseEntity<String> check1() { return ResponseEntity.ok("OK"); }
-
-    @GetMapping("/check2")
-    public ResponseEntity<String> check2() { return ResponseEntity.ok("OK"); }
-
-    @GetMapping("/check3")
-    public ResponseEntity<String> check3() { return ResponseEntity.ok("OK"); }
-
-    @GetMapping("/check4")
-    public ResponseEntity<String> check4() { return ResponseEntity.ok("OK"); }
-
-    @GetMapping("/check5")
-    public ResponseEntity<String> check5() { return ResponseEntity.ok("OK"); }
-
-    @GetMapping("/check6")
-    public ResponseEntity<String> check6() { return ResponseEntity.ok("OK"); }
-
-    @GetMapping("/check7")
-    public ResponseEntity<String> check7() { return ResponseEntity.ok("OK"); }
-
-    @GetMapping("/check8")
-    public ResponseEntity<String> check8() { return ResponseEntity.ok("OK"); }
-
-    @GetMapping("/check9")
-    public ResponseEntity<String> check9() { return ResponseEntity.ok("OK"); }
-
-    @GetMapping("/check10")
-    public ResponseEntity<String> check10() { return ResponseEntity.ok("OK"); }
-
+    /**
+     * Helper method to build standard response map
+     * 
+     * @param key   the response key
+     * @param value the response value
+     * @return map with key, value, and timestamp
+     */
+    private Map<String, Object> buildResponse(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        map.put("time", LocalDateTime.now());
+        return map;
+    }
 }
