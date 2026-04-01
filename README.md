@@ -369,12 +369,12 @@ This project follows a simple Git branching strategy:
 
 ### 1. Admin Dashboard
 
-![Admin Dashboard](ss1)
+![Admin Dashboard](ss1.png)
 
 ### 2. Seller Dashboard
 
-![Seller Dashboard](ss2)
+![Seller Dashboard](ss2.png)
 
 ### 3. Buyer Dashboard
 
-![Buyer Dashboard](ss3)
+![Buyer Dashboard](ss3.png)
