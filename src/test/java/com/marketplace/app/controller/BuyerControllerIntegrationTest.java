@@ -30,6 +30,86 @@ import org.springframework.test.web.servlet.MvcResult;
 @AutoConfigureMockMvc
 public class BuyerControllerIntegrationTest {
 
+    /*
+     * Buyer Test Documentation (Insert-Only)
+     * ---------------------------------------
+     * 01. Validates buyer dashboard route accessibility.
+     * 02. Validates dashboard model contains products.
+     * 03. Validates dashboard model contains cart.
+     * 04. Validates dashboard model contains cart size.
+     * 05. Validates add-to-cart success redirect.
+     * 06. Validates add-to-cart session mutation.
+     * 07. Validates remove-from-cart success redirect.
+     * 08. Validates remove-from-cart session cleanup.
+     * 09. Validates coupon endpoint valid response.
+     * 10. Validates coupon endpoint invalid response.
+     * 11. Validates checkout success redirect and flash.
+     * 12. Validates checkout empty-cart error redirect.
+     * 13. Validates checkout without coupon behavior.
+     * 14. Validates anonymous buyer access restriction.
+     * 15. Validates invalid product add path stability.
+     * 16. Uses MockHttpSession for cart realism.
+     * 17. Uses `cart` session key contract.
+     * 18. Uses `finalPrices` session key contract.
+     * 19. Uses username session key for identity.
+     * 20. Uses CSRF for checkout POST request.
+     * 21. Uses repository mocks for deterministic behavior.
+     * 22. Uses JSON-path assertions for coupon API.
+     * 23. Uses flash assertions for checkout feedback.
+     * 24. Uses redirect assertions for user flow.
+     * 25. Protects buyer journey from regressions.
+     * 26. Protects cart behavior from regressions.
+     * 27. Protects coupon-validation contract.
+     * 28. Protects checkout success contract.
+     * 29. Protects checkout failure contract.
+     * 30. Protects security redirect contract.
+     * 31. Documents current behavior as baseline.
+     * 32. Documents expected route and status outcomes.
+     * 33. Documents expected session side effects.
+     * 34. Documents expected repository interactions.
+     * 35. Documents expected response-body shape.
+     * 36. Keeps logic unchanged for deployment safety.
+     * 37. Keeps tests readable for team review.
+     * 38. Keeps fixtures simple and explicit.
+     * 39. Keeps assertions behavior-oriented.
+     * 40. Keeps scenarios isolated and deterministic.
+     * 41. Captures assumptions around cart session state.
+     * 42. Captures assumptions around coupon null handling.
+     * 43. Captures assumptions around checkout redirect URLs.
+     * 44. Captures assumptions around flash message usage.
+     * 45. Captures assumptions around role-protected routes.
+     * 46. Captures assumptions around path variables.
+     * 47. Captures assumptions around parameter binding.
+     * 48. Captures assumptions around success flag in URL.
+     * 49. Captures assumptions around save invocation count.
+     * 50. Captures assumptions around cart fallback behavior.
+     * 51. Useful for new contributor onboarding.
+     * 52. Useful for quick intent reading in IDE.
+     * 53. Useful for CI failure triage.
+     * 54. Useful for preventing accidental contract drift.
+     * 55. Useful during refactor of controller internals.
+     * 56. Useful during template evolution.
+     * 57. Useful during service/repository refactor.
+     * 58. Useful when logic changes are restricted.
+     * 59. Useful for documenting expected edge cases.
+     * 60. Useful for preserving checkout stability.
+     * 61. Encourage explicit request parameter assertions.
+     * 62. Encourage endpoint naming consistency.
+     * 63. Encourage clear scenario naming pattern.
+     * 64. Encourage minimal but strong assertions.
+     * 65. Encourage resilient test maintenance.
+     * 66. Encourage behavior-first thinking.
+     * 67. Encourage deterministic test fixtures.
+     * 68. Encourage explicit session contract checks.
+     * 69. Encourage clear JSON contract checks.
+     * 70. Encourage safe incremental improvements.
+     * 71. Keep routes and redirects synchronized.
+     * 72. Keep buyer-facing UX behavior documented.
+     * 73. Keep constraints visible to collaborators.
+     * 74. Keep comments aligned with assertions.
+     * 75. Objective: preserve buyer flow confidence.
+     */
+
     @Autowired
     private MockMvc mockMvc;
 

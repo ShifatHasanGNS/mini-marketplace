@@ -30,6 +30,86 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 public class AdminControllerIntegrationTest {
 
+    /*
+     * Admin Test Documentation (Insert-Only)
+     * ---------------------------------------
+     * 01. Validates dashboard renders for admin users.
+     * 02. Validates dashboard includes users list model.
+     * 03. Validates dashboard includes coupons list model.
+     * 04. Validates dashboard includes orders list model.
+     * 05. Validates dashboard includes total-selling model.
+     * 06. Validates dashboard includes top-sellers model.
+     * 07. Validates dashboard includes coupon form model.
+     * 08. Validates openCoupon flag default behavior.
+     * 09. Verifies empty data still renders dashboard.
+     * 10. Verifies total selling is computed correctly.
+     * 11. Verifies delete user endpoint redirects.
+     * 12. Verifies delete user repository invocation.
+     * 13. Verifies add coupon endpoint redirects.
+     * 14. Verifies add coupon repository invocation.
+     * 15. Verifies update coupon endpoint redirects.
+     * 16. Verifies update coupon repository invocation.
+     * 17. Verifies delete coupon endpoint redirects.
+     * 18. Verifies delete coupon repository invocation.
+     * 19. Verifies edit coupon opens edit mode.
+     * 20. Verifies invalid coupon id still renders.
+     * 21. Verifies top-seller scenario remains supported.
+     * 22. Verifies partial update flow remains supported.
+     * 23. Verifies anonymous admin access is blocked.
+     * 24. Uses role annotation to enforce admin context.
+     * 25. Uses CSRF tokens for mutating routes.
+     * 26. Uses mock repositories for deterministic results.
+     * 27. Uses fixed fixtures for predictable totals.
+     * 28. Uses view/model assertions for MVC contracts.
+     * 29. Uses redirect assertions for form workflows.
+     * 30. Protects dashboard template model contract.
+     * 31. Protects coupon management route contract.
+     * 32. Protects delete and update action wiring.
+     * 33. Protects against accidental endpoint regressions.
+     * 34. Protects against accidental model-key regressions.
+     * 35. Documents expected admin-facing behavior.
+     * 36. Documents scenario-level intent for reviewers.
+     * 37. Documents current behavior for no-data pages.
+     * 38. Documents current behavior for invalid IDs.
+     * 39. Documents aggregate computation expectation.
+     * 40. Documents leaderboard data presence expectation.
+     * 41. Keeps logic untouched for production stability.
+     * 42. Keeps comments aligned with real assertions.
+     * 43. Keeps tests readable for group collaboration.
+     * 44. Keeps scenarios independent and isolated.
+     * 45. Keeps setup fixtures concise and reusable.
+     * 46. Keeps mocking minimal and purposeful.
+     * 47. Keeps route-method mapping explicit.
+     * 48. Keeps security behavior visible in tests.
+     * 49. Keeps test output easy to scan in CI.
+     * 50. Keeps assertions focused on behavior contract.
+     * 51. Captures baseline before deeper refactors.
+     * 52. Captures assumptions around openCoupon model flag.
+     * 53. Captures assumptions around dashboard model keys.
+     * 54. Captures assumptions around redirect destinations.
+     * 55. Captures assumptions around repo interaction count.
+     * 56. Captures assumptions around aggregate calculation.
+     * 57. Captures assumptions around authenticated access.
+     * 58. Captures assumptions around empty-list handling.
+     * 59. Captures assumptions around invalid-id resilience.
+     * 60. Captures assumptions around top-seller availability.
+     * 61. Useful for onboarding new team contributors.
+     * 62. Useful for reviewing behavior drift.
+     * 63. Useful for debugging CI failures quickly.
+     * 64. Useful for preserving admin UX consistency.
+     * 65. Useful for safe template evolution.
+     * 66. Useful for safe service-layer refactors.
+     * 67. Useful for maintaining route confidence.
+     * 68. Useful for documenting behavior under constraints.
+     * 69. Useful when deployment logic cannot change.
+     * 70. Useful as a living behavior checklist.
+     * 71. Ensure updates are intentional and explicit.
+     * 72. Ensure assertions remain user-impact focused.
+     * 73. Ensure model names stay in sync with template.
+     * 74. Ensure redirects stay in sync with navigation.
+     * 75. Objective: preserve admin workflow confidence.
+     */
+
     @Autowired
     private MockMvc mockMvc;
 

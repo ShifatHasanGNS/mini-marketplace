@@ -28,6 +28,86 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 public class SellerControllerIntegrationTest {
 
+    /*
+     * Seller Test Documentation (Insert-Only)
+     * ----------------------------------------
+     * 01. Validates seller dashboard route behavior.
+     * 02. Validates dashboard view name contract.
+     * 03. Validates products model presence.
+     * 04. Validates orders model presence.
+     * 05. Validates total-selling model presence.
+     * 06. Validates sellerName model correctness.
+     * 07. Validates add-product redirect flow.
+     * 08. Validates add-product service invocation.
+     * 09. Validates edit-product redirect flow.
+     * 10. Validates edit-product service invocation.
+     * 11. Validates delete-product redirect flow.
+     * 12. Validates delete-product service invocation.
+     * 13. Validates empty dashboard list behavior.
+     * 14. Validates missing-field add tolerance.
+     * 15. Validates multi-order total calculation.
+     * 16. Validates anonymous access login redirect.
+     * 17. Validates empty-price add flow behavior.
+     * 18. Validates partial-update edit behavior.
+     * 19. Validates alternate seller session behavior.
+     * 20. Validates invalid-id delete flow behavior.
+     * 21. Uses seller session username in tests.
+     * 22. Uses role annotation for seller authority.
+     * 23. Uses CSRF for mutating requests.
+     * 24. Uses service mock to isolate controller.
+     * 25. Uses deterministic fixtures for stability.
+     * 26. Uses explicit redirect URL assertions.
+     * 27. Uses explicit model attribute assertions.
+     * 28. Uses explicit invocation verify assertions.
+     * 29. Protects seller dashboard contract.
+     * 30. Protects seller CRUD route contract.
+     * 31. Protects seller totals display contract.
+     * 32. Protects auth-guard behavior contract.
+     * 33. Documents current controller behavior.
+     * 34. Documents route and method expectations.
+     * 35. Documents model key expectations.
+     * 36. Documents redirect target expectations.
+     * 37. Documents service-call expectations.
+     * 38. Documents tolerance of partial payloads.
+     * 39. Keeps logic untouched for deploy safety.
+     * 40. Keeps tests readable under collaboration.
+     * 41. Keeps scenarios scoped and clear.
+     * 42. Keeps fixtures realistic but minimal.
+     * 43. Keeps assertions user-impact oriented.
+     * 44. Keeps behavior checks deterministic.
+     * 45. Captures assumptions around seller identity.
+     * 46. Captures assumptions around dashboard wiring.
+     * 47. Captures assumptions around product form binding.
+     * 48. Captures assumptions around update semantics.
+     * 49. Captures assumptions around delete semantics.
+     * 50. Captures assumptions around total aggregation.
+     * 51. Useful for team onboarding and reviews.
+     * 52. Useful for CI failure context.
+     * 53. Useful for future refactor confidence.
+     * 54. Useful for preserving current UX flow.
+     * 55. Useful when service internals evolve.
+     * 56. Useful when template model requirements change.
+     * 57. Useful when route structure is revisited.
+     * 58. Useful under strict no-logic-change constraints.
+     * 59. Useful for documenting edge behavior.
+     * 60. Useful for preserving controller contracts.
+     * 61. Encourage precise scenario naming.
+     * 62. Encourage explicit redirect assertions.
+     * 63. Encourage explicit model assertions.
+     * 64. Encourage explicit interaction verification.
+     * 65. Encourage isolated per-test setup.
+     * 66. Encourage minimal mocking overhead.
+     * 67. Encourage stable fixture patterns.
+     * 68. Encourage behavior-first maintenance.
+     * 69. Encourage predictable CI outcomes.
+     * 70. Encourage route contract discipline.
+     * 71. Keep comments synchronized with assertions.
+     * 72. Keep seller workflows transparently documented.
+     * 73. Keep constraints visible to project team.
+     * 74. Keep non-functional edits safe and traceable.
+     * 75. Objective: preserve seller flow confidence.
+     */
+
     @Autowired
     private MockMvc mockMvc;
 
