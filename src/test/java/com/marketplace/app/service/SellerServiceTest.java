@@ -21,6 +21,86 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class SellerServiceTest {
 
+    /*
+     * Seller Service Test Documentation (Insert-Only)
+     * ------------------------------------------------
+     * 01. Validates product creation through repository save.
+     * 02. Validates retrieval of all products.
+     * 03. Validates empty product list handling.
+     * 04. Validates seller-specific product retrieval.
+     * 05. Validates missing seller product retrieval.
+     * 06. Validates product lookup by valid id.
+     * 07. Validates product lookup by invalid id.
+     * 08. Validates product update behavior.
+     * 09. Validates product delete delegation.
+     * 10. Validates seller-specific order retrieval.
+     * 11. Validates empty order list handling.
+     * 12. Uses mocked repositories for isolation.
+     * 13. Uses realistic fixture data for readability.
+     * 14. Uses assertion set for values and size.
+     * 15. Uses verify counts for collaboration checks.
+     * 16. Protects seller service contract integrity.
+     * 17. Protects repository method wiring.
+     * 18. Protects optional-return behavior assumptions.
+     * 19. Protects list-return behavior assumptions.
+     * 20. Documents behavior as stable baseline.
+     * 21. Confirms saved product fields remain intact.
+     * 22. Confirms updated product reflects new values.
+     * 23. Confirms seller filter is applied correctly.
+     * 24. Confirms delete uses provided product id.
+     * 25. Confirms order filter by seller name.
+     * 26. Confirms non-null result contracts.
+     * 27. Confirms size expectations where deterministic.
+     * 28. Confirms empty collections in no-data paths.
+     * 29. Confirms optional presence for valid ids.
+     * 30. Confirms optional emptiness for invalid ids.
+     * 31. Useful for maintaining seller workflows.
+     * 32. Useful for reducing regression risk.
+     * 33. Useful for CI diagnostics and intent clarity.
+     * 34. Useful for onboarding new project members.
+     * 35. Useful when repository API evolves.
+     * 36. Useful when product model evolves.
+     * 37. Useful when order model evolves.
+     * 38. Useful when introducing validation rules.
+     * 39. Useful when introducing pagination later.
+     * 40. Useful when introducing sorting later.
+     * 41. Encourages explicit seller identity checks.
+     * 42. Encourages readable fixture naming.
+     * 43. Encourages independent scenario tests.
+     * 44. Encourages minimal yet strong assertions.
+     * 45. Encourages deterministic behavior checks.
+     * 46. Encourages clean separation from controller tests.
+     * 47. Encourages service-focused validation scope.
+     * 48. Encourages stable contracts for callers.
+     * 49. Encourages predictable refactor outcomes.
+     * 50. Encourages confidence before deployment.
+     * 51. Notes test scope excludes transaction semantics.
+     * 52. Notes test scope excludes HTTP semantics.
+     * 53. Notes repository responses are mock-driven.
+     * 54. Notes comments are non-functional additions.
+     * 55. Notes logic remains intentionally unchanged.
+     * 56. Notes no persistence integration runs here.
+     * 57. Notes this suite is fast by design.
+     * 58. Notes this suite is deterministic by design.
+     * 59. Notes assertions reflect current contract.
+     * 60. Notes updates should be intentional if logic changes.
+     * 61. Keep service expectations transparent.
+     * 62. Keep product flow assumptions explicit.
+     * 63. Keep order flow assumptions explicit.
+     * 64. Keep repository interactions auditable.
+     * 65. Keep test output easy to interpret.
+     * 66. Keep maintenance overhead manageable.
+     * 67. Keep group collaboration smooth.
+     * 68. Keep behavior drift easy to detect.
+     * 69. Keep readability improvements non-invasive.
+     * 70. Keep deployment constraints respected.
+     * 71. Baseline protects product add behavior.
+     * 72. Baseline protects product query behavior.
+     * 73. Baseline protects product update behavior.
+     * 74. Baseline protects order query behavior.
+     * 75. Objective: preserve seller service confidence.
+     */
+
     @Mock
     private ProductRepository productRepository;
 
