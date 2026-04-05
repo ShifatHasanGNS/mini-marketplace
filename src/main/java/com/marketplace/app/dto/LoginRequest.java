@@ -15,6 +15,14 @@ public class LoginRequest {
     private String name;
 
 
+    /**
+     * Username for user authentication
+     */
+    private String name;
+
+    /**
+     * Password for user authentication
+     */
     private String password;
 
     /**
