@@ -9,16 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * AuthController
- * 
- * Handles all authentication and authorization operations in the Mini Marketplace.
- * Manages user login, signup, and role-based dashboard redirection.
- * Provides endpoints for displaying login/signup pages and processing authentication requests.
- * 
- * @author Mini Marketplace Team
- * @version 1.0
- */
+
 @Controller
 public class AuthController {
 
@@ -35,8 +26,18 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     /**
+     * Displays the homepage
+     *
+     * @return the index page template name
+     */
+    @GetMapping("/")
+    public String homePage() {
+        return "index";
+    }
+
+    /**
      * Displays the login page
-     * 
+     *
      * @return the login page template name
      */
     @GetMapping("/login")
