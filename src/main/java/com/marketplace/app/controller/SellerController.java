@@ -104,7 +104,6 @@ public class SellerController {
     public String addProduct(@ModelAttribute Product product, HttpSession session) {
         // Retrieve seller username from session
         String sellerName = (String) session.getAttribute("username");
-<<<<<<< HEAD
         
         // Redirect to login if session is invalid
         if (sellerName == null) {
@@ -115,11 +114,6 @@ public class SellerController {
         product.setSellerName(sellerName);
         
         // Save product through service layer
-=======
-        if (sellerName == null) return "redirect:/login";
-
-        product.setSellerName(sellerName);
->>>>>>> dde69df (Fixed some issues...)
         sellerService.addProduct(product);
         
         // Redirect to dashboard after successful creation
@@ -143,7 +137,6 @@ public class SellerController {
     ) {
         // Retrieve seller username from session
         String sellerName = (String) session.getAttribute("username");
-<<<<<<< HEAD
         
         // Redirect to login if session is invalid
         if (sellerName == null) {
@@ -155,12 +148,6 @@ public class SellerController {
         product.setSellerName(sellerName);
         
         // Update product through service layer
-=======
-        if (sellerName == null) return "redirect:/login";
-
-        product.setId(id);
-        product.setSellerName(sellerName);
->>>>>>> dde69df (Fixed some issues...)
         sellerService.updateProduct(product);
         
         // Redirect to dashboard after successful update
@@ -179,7 +166,6 @@ public class SellerController {
     public String deleteProduct(@PathVariable Long id, HttpSession session) {
         // Retrieve seller username from session
         String sellerName = (String) session.getAttribute("username");
-<<<<<<< HEAD
         
         // Redirect to login if session is invalid
         if (sellerName == null) {
@@ -187,10 +173,6 @@ public class SellerController {
         }
         
         // Delete product through service layer
-=======
-        if (sellerName == null) return "redirect:/login";
-
->>>>>>> dde69df (Fixed some issues...)
         sellerService.deleteProduct(id);
         
         // Redirect to dashboard after successful deletion
@@ -205,10 +187,7 @@ public class SellerController {
      * @param model    the Spring model to populate with data
      */
     private void populateModel(String username, Model model) {
-<<<<<<< HEAD
         // Fetch all products for this seller
-=======
->>>>>>> dde69df (Fixed some issues...)
         List<Product> products = sellerService.getProductsBySellerName(username);
         model.addAttribute("products", products);
         
