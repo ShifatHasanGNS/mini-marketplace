@@ -12,23 +12,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-/**
- * SecurityConfig
- * 
- * Configures Spring Security for the Mini Marketplace application.
- * Sets up authentication, authorization, and access control rules.
- * Manages password encoding, login/logout behavior, and role-based access.
- * 
- * @author Mini Marketplace Team
- * @version 1.0
- */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    /**
-     * Service for loading user details from database
-     */
+    // Service for loading user details from database
     private final UserDetailsServiceImpl userDetailsService;
 
     /**
@@ -87,8 +76,8 @@ public class SecurityConfig {
                 // Configure authorization for different URLs
                 .authorizeHttpRequests(auth ->
                         auth
-                                // Permit unauthenticated access to login and signup
-                                .requestMatchers("/login", "/signup")
+                                // Permit unauthenticated access to login, signup, and error page
+                                .requestMatchers("/login", "/signup", "/error")
                                 .permitAll()
                                 
                                 // Restrict admin operations to ADMIN role
