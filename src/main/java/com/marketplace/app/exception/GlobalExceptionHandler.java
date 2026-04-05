@@ -3,7 +3,6 @@ package com.marketplace.app.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -11,19 +10,6 @@ import org.springframework.security.access.AccessDeniedException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-    //  404 – No handler found (page / endpoint does not exist)
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public ModelAndView handleNotFound(NoHandlerFoundException ex, HttpServletRequest request) {
-        return buildErrorView(
-                404,
-                "Page Not Found",
-                "The page you are looking for does not exist or may have been moved: "
-                        + request.getRequestURI(),
-                "404 Not Found"
-        );
-    }
-
     //  403 – Access denied (not authorised to view the resource)
     @ExceptionHandler(AccessDeniedException.class)
     public ModelAndView handleAccessDenied(AccessDeniedException ex) {
