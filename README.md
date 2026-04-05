@@ -38,7 +38,7 @@ Test the features by signing up as a Buyer, Seller, or Admin.
 
 Mini Marketplace is a web-based application that allows:
 
-- Admins -> can manage the whole marketplace , can see all products available in the marketplace , can add coupon ( edit/delete) ,manage users
+- Admins -> can manage the whole marketplace: full CRUD on products, users, and coupons; view all orders and sales analytics.
 - Sellers -> can add, update, delete products and view orders.
 - Buyers -> can browse products, place orders, and apply coupons.
 
@@ -79,10 +79,8 @@ The database structure consists of the following key entities:
 
 ```mermaid
 erDiagram
-    LOGIN ||--o{ PRODUCT : "1 seller has many"
-    LOGIN ||--o{ ORDERS : "1 buyer places many"
-    PRODUCT ||--o{ ORDERS : "1 product in many"
-    ORDERS ||--|| COUPON : "uses"
+    LOGIN ||--o{ PRODUCT : "seller has many"
+    LOGIN ||--o{ ORDERS : "buyer places many"
 
     LOGIN {
         int id PK
@@ -97,26 +95,28 @@ erDiagram
         decimal price
         string origin
         string pic
-        int seller_id FK
+        string sellerName
     }
 
     ORDERS {
         int id PK
-        int buyer_id FK
-        int product_id FK
-        string status
-        decimal total_amount
-        string tracking_number
-        decimal discount_percentage
-        int coupon_id FK
-        date order_date
+        string customerName
+        string sellerName
+        string productName
+        decimal price
+        string deliveryAddress
+        string mobileNumber
+        string origin
+        decimal discountPercentage
+        string couponCode
+        date orderDate
     }
 
     COUPON {
         int id PK
         string code
-        decimal discount_percentage
-        date valid_until
+        decimal discountPercentage
+        date validUntil
     }
 ```
 
@@ -144,18 +144,23 @@ erDiagram
 
 ### Admin Endpoints
 
-| Method | Path                | Auth     | Role  | Description                        |
-| ------ | ------------------- | -------- | ----- | ---------------------------------- |
-| GET    | /admin              | Required | ADMIN | Redirect to admin dashboard        |
-| GET    | /admin/dashboard    | Required | ADMIN | View admin dashboard               |
-| GET    | /admin/users        | Required | ADMIN | View all users                     |
-| DELETE | /admin/users/{id}   | Required | ADMIN | Delete a user by ID                |
-| GET    | /admin/coupons      | Required | ADMIN | View all coupons                   |
-| POST   | /admin/coupons      | Required | ADMIN | Create a new coupon                |
-| GET    | /admin/coupons/{id} | Required | ADMIN | View coupon details for editing    |
-| PUT    | /admin/coupons/{id} | Required | ADMIN | Update coupon details              |
-| DELETE | /admin/coupons/{id} | Required | ADMIN | Delete a coupon by ID              |
-| GET    | /admin/sales        | Required | ADMIN | View sales summary and top sellers |
+| Method | Path                 | Auth     | Role  | Description                        |
+| ------ | -------------------- | -------- | ----- | ---------------------------------- |
+| GET    | /admin               | Required | ADMIN | Redirect to admin dashboard        |
+| GET    | /admin/dashboard     | Required | ADMIN | View admin dashboard               |
+| GET    | /admin/users         | Required | ADMIN | View all users                     |
+| DELETE | /admin/users/{id}    | Required | ADMIN | Delete a user by ID                |
+| GET    | /admin/coupons       | Required | ADMIN | View all coupons                   |
+| POST   | /admin/coupons       | Required | ADMIN | Create a new coupon                |
+| GET    | /admin/coupons/{id}  | Required | ADMIN | View coupon details for editing    |
+| PUT    | /admin/coupons/{id}  | Required | ADMIN | Update coupon details              |
+| DELETE | /admin/coupons/{id}  | Required | ADMIN | Delete a coupon by ID              |
+| GET    | /admin/sales         | Required | ADMIN | View sales summary and top sellers |
+| GET    | /admin/products      | Required | ADMIN | View all products                  |
+| POST   | /admin/products      | Required | ADMIN | Add a new product                  |
+| GET    | /admin/products/{id} | Required | ADMIN | Load product edit form             |
+| PUT    | /admin/products/{id} | Required | ADMIN | Update a product by ID             |
+| DELETE | /admin/products/{id} | Required | ADMIN | Delete a product by ID             |
 
 ### Seller Endpoints
 
@@ -369,12 +374,12 @@ This project follows a simple Git branching strategy:
 
 ### 1. Admin Dashboard
 
-![Admin Dashboard](images/ss1.png)
+![Admin Dashboard](images/admin.png)
 
 ### 2. Seller Dashboard
 
-![Seller Dashboard](images/ss2.png)
+![Seller Dashboard](images/seller.png)
 
 ### 3. Buyer Dashboard
 
-![Buyer Dashboard](images/ss3.png)
+![Buyer Dashboard](images/buyer.png)
