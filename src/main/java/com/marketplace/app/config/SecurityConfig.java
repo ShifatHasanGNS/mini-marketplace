@@ -12,61 +12,133 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * SecurityConfig
+ * 
+ * Configures Spring Security for the Mini Marketplace application.
+ * Sets up authentication, authorization, and access control rules.
+ * Manages password encoding, login/logout behavior, and role-based access.
+ * 
+ * @author Mini Marketplace Team
+ * @version 1.0
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Service for loading user details from database
+     */
     private final UserDetailsServiceImpl userDetailsService;
 
+    /**
+     * Constructor with dependency injection
+     * 
+     * @param userDetailsService the UserDetailsService implementation
+     */
     public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * Creates password encoder bean
+     * Uses BCrypt algorithm for password hashing
+     * 
+     * @return configured PasswordEncoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Creates authentication provider bean
+     * Configures DAO authentication with custom user details service
+     * 
+     * @return configured AuthenticationProvider
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider =
-            new DaoAuthenticationProvider();
-
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        
+        // Set custom user details service
         authProvider.setUserDetailsService(userDetailsService);
+        
+        // Set password encoder
         authProvider.setPasswordEncoder(passwordEncoder());
-
+        
         return authProvider;
     }
 
+    /**
+     * Configures security filter chain for HTTP requests
+     * Sets up URL authorization rules and form login configuration
+     * 
+     * @param http the HttpSecurity object
+     * @return configured SecurityFilterChain
+     * @throws Exception if configuration fails
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth ->
-                auth
-                    .requestMatchers("/login", "/signup")
-                    .permitAll()
-                    .requestMatchers("/admin/**")
-                    .hasRole("ADMIN")
-                    .requestMatchers("/seller/**")
-                    .hasRole("SELLER")
-                    .requestMatchers("/buyer/**")
-                    .hasRole("BUYER")
-                    .anyRequest()
-                    .authenticated()
-            )
-            .formLogin(form ->
-                form
-                    .loginPage("/login")
-                    .usernameParameter("name")
-                    .passwordParameter("password")
-                    .defaultSuccessUrl("/redirect-dashboard", true)
-                    .failureUrl("/login?error=true")
-                    .permitAll()
-            )
-            .logout(logout ->
-                logout.logoutUrl("/logout").logoutSuccessUrl("/login")
-            );
+                // Disable CSRF for stateless API endpoints
+                .csrf(csrf -> csrf.disable())
+                
+                // Configure authorization for different URLs
+                .authorizeHttpRequests(auth ->
+                        auth
+                                // Permit unauthenticated access to login and signup
+                                .requestMatchers("/login", "/signup")
+                                .permitAll()
+                                
+                                // Restrict admin operations to ADMIN role
+                                .requestMatchers("/admin/**")
+                                .hasRole("ADMIN")
+                                
+                                // Restrict seller operations to SELLER role
+                                .requestMatchers("/seller/**")
+                                .hasRole("SELLER")
+                                
+                                // Restrict buyer operations to BUYER role
+                                .requestMatchers("/buyer/**")
+                                .hasRole("BUYER")
+                                
+                                // Require authentication for all other requests
+                                .anyRequest()
+                                .authenticated()
+                )
+                
+                // Configure form login page
+                .formLogin(form ->
+                        form
+                                // Custom login page URL
+                                .loginPage("/login")
+                                
+                                // Custom username parameter name
+                                .usernameParameter("name")
+                                
+                                // Custom password parameter name
+                                .passwordParameter("password")
+                                
+                                // Redirect to dashboard after successful login
+                                .defaultSuccessUrl("/redirect-dashboard", true)
+                                
+                                // Redirect to login on authentication failure
+                                .failureUrl("/login?error=true")
+                                
+                                // Permit access to login page
+                                .permitAll()
+                )
+                
+                // Configure logout behavior
+                .logout(logout ->
+                        logout
+                                // Logout endpoint URL
+                                .logoutUrl("/logout")
+                                
+                                // Redirect to login after logout
+                                .logoutSuccessUrl("/login")
+                );
 
         return http.build();
     }

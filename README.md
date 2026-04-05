@@ -30,6 +30,7 @@ Test the features by signing up as a Buyer, Seller, or Admin.
 - [Pipeline](#pipeline)
 - [Branch Strategy](#branch-strategy)
 - [Render Deployment](#render-deployment)
+- [Screenshots](#screenshots)
 
 ---
 
@@ -361,3 +362,19 @@ This project follows a simple Git branching strategy:
 4. CI runs tests on PR
 5. Merge to `main` after review
 6. Auto-deployment triggers
+
+---
+
+## Screenshots
+
+### 1. Admin Dashboard
+
+![Admin Dashboard](images/ss1.png)
+
+### 2. Seller Dashboard
+
+![Seller Dashboard](images/ss2.png)
+
+### 3. Buyer Dashboard
+
+![Buyer Dashboard](images/ss3.png)
