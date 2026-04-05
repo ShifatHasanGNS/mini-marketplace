@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Mini Marketplace</title>
+    <style>
+        :root {
+            --bg-start: #0f172a;
+            --bg-end: #1e293b;
+            --card-bg: rgba(15, 23, 42, 0.72);
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #22c55e;
+            --accent-hover: #16a34a;
+            --border: rgba(148, 163, 184, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: radial-gradient(circle at top left, #1d4ed8 0%, transparent 40%),
+                        radial-gradient(circle at bottom right, #059669 0%, transparent 38%),
+                        linear-gradient(130deg, var(--bg-start), var(--bg-end));
+            color: var(--text-main);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 640px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            backdrop-filter: blur(4px);
+            border-radius: 18px;
+            padding: 38px 30px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(2, 6, 23, 0.35);
+        }
+
+        .code {
+            display: inline-block;
+            font-size: clamp(44px, 12vw, 78px);
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #f8fafc;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: clamp(22px, 5vw, 32px);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.15s ease, background-color 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #052e16;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(148, 163, 184, 0.15);
+            color: var(--text-main);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(148, 163, 184, 0.22);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="code">404</div>
+    <h1>This page does not exist</h1>
+    <p>
+        The URL you entered is invalid or the page was moved.
+        Please use one of the options below.
+    </p>
+    <div class="actions">
+        <a class="btn btn-primary" href="javascript:history.back()">Go Back</a>
+        <a class="btn btn-secondary" th:href="@{/redirect-dashboard}">Dashboard</a>
+    </div>
+</div>
+</body>
+</html>
