@@ -124,7 +124,7 @@
             letter-spacing: 0.3px;
         }
 
-        .btn-home {
+        .btn-dashboard {
             display: inline-block;
             width: 100%;
             padding: 14px;
@@ -139,7 +139,7 @@
             transition: background 0.3s, transform 0.2s;
         }
 
-        .btn-home:hover {
+        .btn-dashboard:hover {
             background: linear-gradient(90deg, #5a67d8, #6b46c1);
             transform: translateY(-2px);
             color: #fff;
@@ -151,6 +151,9 @@
             font-size: 14px;
             color: #667eea;
             text-decoration: none;
+            cursor: pointer;
+            background: none;
+            border: none;
             transition: color 0.3s;
         }
 
@@ -177,7 +180,6 @@
 
         <!-- Icon -->
         <div class="error-icon-wrap">
-            <!-- Icon switches based on error code -->
             <i th:if="${errorCode == 404}" class="fa-solid fa-magnifying-glass"></i>
             <i th:if="${errorCode == 403}" class="fa-solid fa-lock"></i>
             <i th:if="${errorCode == 401}" class="fa-solid fa-user-lock"></i>
@@ -200,21 +202,30 @@
         <!-- Error message -->
         <div class="error-message-box">
             <div class="label">What happened</div>
-            <p
-                th:text="${errorMessage != null ? errorMessage : 'An unexpected error occurred. Please try again or contact support if the problem persists.'}">
-            </p>
+            <p th:text="${errorMessage != null ? errorMessage :
+                'An unexpected error occurred. Please try again or contact support if the problem persists.'}"></p>
         </div>
 
-        <!-- Actions -->
-        <a class="btn-home" th:href="@{/}">
-            <i class="fa-solid fa-house" style="margin-right: 8px;"></i>
-            Go to Home
+        <!--
+            "Go to Dashboard" uses /redirect-dashboard which Spring Security will:
+              - redirect to /login  if the user is NOT authenticated
+              - redirect to their role-specific dashboard if they ARE authenticated
+            This means authenticated admins/sellers/buyers always land back on their
+            own dashboard, and no one gets unexpectedly "logged out".
+        -->
+        <a class="btn-dashboard" th:href="@{/redirect-dashboard}">
+            <i class="fa-solid fa-gauge" style="margin-right: 8px;"></i>
+            Go to Dashboard
         </a>
 
         <br />
-        <a class="btn-back" href="javascript:history.back()">
+        <!--
+            "Previous Page" goes back in browser history.
+            This is safe – it never triggers /logout.
+        -->
+        <a class="btn-back" onclick="history.back(); return false;" href="#">
             <i class="fa-solid fa-arrow-left" style="margin-right: 4px;"></i>
-            Go Back
+            Previous Page
         </a>
 
     </div>

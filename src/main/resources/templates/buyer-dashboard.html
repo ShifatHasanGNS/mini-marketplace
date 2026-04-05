@@ -1,341 +1,322 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Buyer Dashboard</title>
 
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-        />
+<head>
+    <meta charset="UTF-8" />
+    <title>Buyer Dashboard</title>
 
-        <link
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-            rel="stylesheet"
-        />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
-        <style>
-            body {
-                background: #f5f7fb;
-                font-family: Segoe UI;
-            }
+    <style>
+        body {
+            background: #f5f7fb;
+            font-family: Segoe UI;
+        }
 
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                width: 230px;
-                height: 100%;
-                background: #1e293b;
-                color: white;
-                padding-top: 20px;
-            }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100%;
+            background: #1e293b;
+            color: white;
+            padding-top: 20px;
+        }
 
-            .sidebar h4 {
-                text-align: center;
-                margin-bottom: 30px;
-            }
+        .sidebar h4 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-            .sidebar a {
-                display: block;
-                color: white;
-                padding: 12px 20px;
-                text-decoration: none;
-            }
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+        }
 
-            .sidebar a:hover {
-                background: #334155;
-            }
+        .sidebar a:hover {
+            background: #334155;
+        }
 
-            .main {
-                margin-left: 240px;
-                padding: 30px;
-            }
+        .main {
+            margin-left: 240px;
+            padding: 30px;
+        }
 
-            .card {
-                border: none;
-                border-radius: 12px;
-                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
 
-            .product-card img {
-                height: 170px;
-                object-fit: cover;
-            }
+        .product-card img {
+            height: 170px;
+            object-fit: cover;
+        }
 
-            .price {
-                color: green;
-                font-weight: bold;
-            }
-        </style>
-    </head>
+        .price {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
 
-    <body>
-        <!-- SIDEBAR -->
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h4>Buyer Panel</h4>
 
-        <div class="sidebar">
-            <h4>Buyer Panel</h4>
+        <a th:href="@{/buyer/dashboard/{username}(username=${username})}">
+            <i class="fa fa-home"></i> Dashboard
+        </a>
+        <a th:href="@{/buyer/products/{username}(username=${username})}">
+            <i class="fa fa-box"></i> Products
+        </a>
+        <a th:href="@{/buyer/cart/{username}(username=${username})}">
+            <i class="fa fa-shopping-cart"></i> Cart
+            <span class="badge bg-warning text-dark" th:text="${cartSize}"></span>
+        </a>
+        <a th:href="@{/buyer/orders/{username}(username=${username})}">
+            <i class="fa fa-history"></i> Orders
+        </a>
+        <a th:href="@{/logout}">
+            <i class="fa fa-sign-out"></i> Logout
+        </a>
+    </div>
 
-            <a th:href="@{/buyer/dashboard/{username}(username=${username})}">
-                <i class="fa fa-home"></i> Dashboard
-            </a>
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        <h2 class="mb-4">Welcome <span th:text="${username}"></span></h2>
 
-            <a th:href="@{/buyer/products/{username}(username=${username})}">
-                <i class="fa fa-box"></i> Products
-            </a>
-
-            <a th:href="@{/buyer/cart/{username}(username=${username})}">
-                <i class="fa fa-shopping-cart"></i>
-                Cart
-                <span
-                    class="badge bg-warning text-dark"
-                    th:text="${cartSize}"
-                ></span>
-            </a>
-
-            <a th:href="@{/buyer/orders/{username}(username=${username})}">
-                <i class="fa fa-history"></i> Orders
-            </a>
-
-            <a th:href="@{/logout}"> <i class="fa fa-sign-out"></i> Logout </a>
+        <!-- SUCCESS MESSAGE -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <i class="fa fa-check-circle me-2"></i>
+            <span th:text="${successMessage}"></span>
         </div>
 
-        <!-- MAIN CONTENT -->
+        <!-- ERROR MESSAGE (e.g. empty cart checkout attempt) -->
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <i class="fa fa-exclamation-circle me-2"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
 
-        <div class="main">
-            <h2 class="mb-4">
-                Welcome
-                <span th:text="${username}"></span>
-            </h2>
-
-            <!-- SUCCESS MESSAGE -->
-
-            <div th:if="${successMessage}" class="alert alert-success">
-                <span th:text="${successMessage}"></span>
+        <!-- ─── DASHBOARD STATS ──────────────────────────────────────── -->
+        <!--
+                totalSpent is only set by dashboard() controller method.
+                It is NOT set by the cart/products/orders controller methods,
+                so this section only appears on the main dashboard page.
+            -->
+        <div th:if="${totalSpent != null}" class="row mb-4">
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <h6>Total Spending</h6>
+                    <h4 class="text-success">
+                        ৳ <span th:text="${totalSpent}"></span>
+                    </h4>
+                </div>
             </div>
-
-            <!-- DASHBOARD STATS -->
-
-            <div th:if="${totalSpent != null}" class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card p-3">
-                        <h6>Total Spending</h6>
-
-                        <h4 class="text-success">
-                            ৳ <span th:text="${totalSpent}"></span>
-                        </h4>
+            <div class="col-md-8">
+                <div class="card p-3">
+                    <h6>Favourite Sellers</h6>
+                    <div>
+                        <span class="badge bg-primary me-2" th:each="s : ${topSellers}" th:text="${s}"></span>
+                        <span th:if="${#lists.isEmpty(topSellers)}" class="text-muted">
+                            No orders yet.
+                        </span>
                     </div>
                 </div>
-
-                <div class="col-md-8">
-                    <div class="card p-3">
-                        <h6>Top Sellers</h6>
-
-                        <div>
-                            <span
-                                class="badge bg-primary me-2"
-                                th:each="s : ${topSellers}"
-                                th:text="${s}"
-                            >
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PRODUCTS -->
-
-            <div th:if="${products != null}">
-                <h4 class="mb-3">All Products</h4>
-
-                <div class="row">
-                    <div class="col-md-3 mb-4" th:each="p : ${products}">
-                        <div class="card product-card">
-                            <img th:src="${p.pic}" />
-
-                            <div class="card-body">
-                                <h5 th:text="${p.name}"></h5>
-
-                                <p
-                                    class="price"
-                                    th:text="'৳ ' + ${p.price}"
-                                ></p>
-
-                                <p>
-                                    Seller:
-                                    <span th:text="${p.sellerName}"></span>
-                                </p>
-
-                                <p>
-                                    Origin:
-                                    <span th:text="${p.origin}"></span>
-                                </p>
-
-                                <a
-                                    class="btn btn-success w-100"
-                                    th:href="@{/buyer/add-to-cart/{id}/{username}
-(id=${p.id},username=${username})}"
-                                >
-                                    Add to Cart
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CART -->
-
-            <div th:if="${cart != null}">
-                <h4 class="mb-3">Your Cart</h4>
-
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th>Seller</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr th:each="p : ${cart}">
-                            <td th:text="${p.name}"></td>
-
-                            <td th:text="'৳ ' + ${p.price}"></td>
-
-                            <td th:text="${p.sellerName}"></td>
-
-                            <td>
-                                <a
-                                    class="btn btn-danger btn-sm"
-                                    th:href="@{/buyer/remove-from-cart/{id}/{username}
-(id=${p.id},username=${username})}"
-                                >
-                                    Remove
-                                </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- CHECKOUT FORM -->
-
-                <div class="card p-4 mt-4">
-                    <h5>Checkout</h5>
-
-                    <form th:action="@{/buyer/checkout}" method="post">
-                        <input
-                            type="hidden"
-                            name="username"
-                            th:value="${username}"
-                        />
-
-                        <div class="mb-3">
-                            <label>Delivery Address</label>
-
-                            <input
-                                type="text"
-                                name="address"
-                                class="form-control"
-                                required
-                            />
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Mobile</label>
-
-                            <input
-                                type="text"
-                                name="mobile"
-                                class="form-control"
-                                required
-                            />
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Coupon</label>
-
-                            <div class="input-group">
-                                <input
-                                    type="text"
-                                    id="couponCode"
-                                    name="couponCode"
-                                    class="form-control"
-                                />
-
-                                <button
-                                    type="button"
-                                    class="btn btn-success"
-                                    onclick="checkCoupon()"
-                                >
-                                    OK
-                                </button>
-                            </div>
-                        </div>
-
-                        <div id="couponResult"></div>
-
-                        <button class="btn btn-primary mt-3">Checkout</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- ORDER HISTORY -->
-
-            <div th:if="${orders != null}">
-                <h4 class="mb-3">Order History</h4>
-
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th>Seller</th>
-                            <th>Origin</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr th:each="o : ${orders}">
-                            <td th:text="${o.productName}"></td>
-
-                            <td th:text="'৳ ' + ${o.price}"></td>
-
-                            <td th:text="${o.sellerName}"></td>
-
-                            <td th:text="${o.origin}"></td>
-
-                            <td th:text="${o.orderDate}"></td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
 
-        <script>
-            function checkCoupon() {
-                let code = document.getElementById("couponCode").value;
+        <!-- ─── PRODUCTS ─────────────────────────────────────────────── -->
+        <div th:if="${products != null}">
+            <h4 class="mb-3">All Products</h4>
 
-                fetch("/buyer/check-coupon?code=" + code)
-                    .then((response) => response.json())
+            <div class="row">
+                <div class="col-md-3 mb-4" th:each="p : ${products}">
+                    <div class="card product-card">
+                        <img th:src="${p.pic}" alt="product" />
+                        <div class="card-body">
+                            <h5 th:text="${p.name}"></h5>
+                            <p class="price" th:text="'৳ ' + ${p.price}"></p>
+                            <p>Seller: <span th:text="${p.sellerName}"></span></p>
+                            <p>Origin: <span th:text="${p.origin}"></span></p>
+                            <a class="btn btn-success w-100"
+                                th:href="@{/buyer/add-to-cart/{id}/{username}(id=${p.id},username=${username})}">
+                                Add to Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-                    .then((data) => {
-                        let result = document.getElementById("couponResult");
+                <!-- Empty state -->
+                <div th:if="${#lists.isEmpty(products)}" class="col-12">
+                    <p class="text-muted">No products available yet.</p>
+                </div>
+            </div>
+        </div>
 
-                        if (data.valid) {
-                            result.innerHTML =
-                                "<div class='alert alert-success'>Coupon valid! Discount: " +
-                                data.discount +
-                                "% applied.</div>";
-                        } else {
-                            result.innerHTML =
-                                "<div class='alert alert-danger'>Invalid coupon</div>";
-                        }
-                    });
+        <!-- ─── CART ──────────────────────────────────────────────────── -->
+        <!--
+                FIX: Only show the cart section when the cart is non-null AND non-empty.
+                Previously, `th:if="${cart != null}"` was always true (an empty ArrayList
+                is never null), so an empty checkout form appeared on every page load.
+            -->
+        <div th:if="${cart != null and !#lists.isEmpty(cart)}">
+            <h4 class="mb-3">Your Cart</h4>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Seller</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${cart}">
+                        <td th:text="${p.name}"></td>
+                        <td th:text="'৳ ' + ${p.price}"></td>
+                        <td th:text="${p.sellerName}"></td>
+                        <td>
+                            <a class="btn btn-danger btn-sm"
+                                th:href="@{/buyer/remove-from-cart/{id}/{username}(id=${p.id},username=${username})}">
+                                Remove
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- CHECKOUT FORM -->
+            <div class="card p-4 mt-4">
+                <h5>Checkout</h5>
+
+                <form th:action="@{/buyer/checkout}" method="post">
+                    <input type="hidden" name="username" th:value="${username}" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Delivery Address</label>
+                        <input type="text" name="address" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Mobile</label>
+                        <input type="text" name="mobile" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Coupon Code (optional)</label>
+                        <div class="input-group">
+                            <input type="text" id="couponCode" name="couponCode" class="form-control"
+                                placeholder="Enter coupon code" />
+                            <button type="button" class="btn btn-outline-success" onclick="checkCoupon()">
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="couponResult"></div>
+
+                    <button class="btn btn-primary mt-3 w-100">
+                        <i class="fa fa-credit-card me-2"></i>Place Order
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Empty cart notice (only on the cart page when cart IS empty) -->
+        <div th:if="${cart != null and #lists.isEmpty(cart)}">
+            <div class="alert alert-info">
+                <i class="fa fa-shopping-cart me-2"></i>
+                Your cart is empty.
+                <a th:href="@{/buyer/products/{username}(username=${username})}">Browse products</a>
+            </div>
+        </div>
+
+        <!-- ─── ORDER HISTORY ─────────────────────────────────────────── -->
+        <div th:if="${orders != null}">
+            <h4 class="mb-3">Order History</h4>
+
+            <div th:if="${#lists.isEmpty(orders)}" class="text-muted">
+                No orders placed yet.
+            </div>
+
+            <table th:if="${!#lists.isEmpty(orders)}" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Seller</th>
+                        <th>Origin</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="o : ${orders}">
+                        <td th:text="${o.productName}"></td>
+                        <td th:text="'৳ ' + ${o.price}"></td>
+                        <td th:text="${o.sellerName}"></td>
+                        <td th:text="${o.origin}"></td>
+                        <td th:text="${o.orderDate}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * AJAX coupon check.
+         * - Shows a clear message for valid / expired / invalid coupons.
+         * - Has a .catch() handler so network or auth errors are surfaced.
+         */
+        function checkCoupon() {
+            const code = document.getElementById("couponCode").value.trim();
+            const result = document.getElementById("couponResult");
+
+            if (!code) {
+                result.innerHTML = "<div class='alert alert-warning'>Please enter a coupon code.</div>";
+                return;
             }
-        </script>
-    </body>
+
+            result.innerHTML = "<div class='alert alert-secondary'>Checking…</div>";
+
+            fetch("/buyer/check-coupon?code=" + encodeURIComponent(code))
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Server returned " + response.status);
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data.valid) {
+                        result.innerHTML =
+                            "<div class='alert alert-success'>" +
+                            "<i class='fa fa-tag me-2'></i>" +
+                            "Coupon valid! <strong>" + data.discount + "% discount</strong> will be applied at checkout." +
+                            "</div>";
+                    } else {
+                        const msg = data.message || "Invalid or expired coupon code.";
+                        result.innerHTML =
+                            "<div class='alert alert-danger'>" +
+                            "<i class='fa fa-times-circle me-2'></i>" + msg +
+                            "</div>";
+                    }
+                })
+                .catch(function (err) {
+                    result.innerHTML =
+                        "<div class='alert alert-warning'>" +
+                        "Could not verify coupon right now. Please try again." +
+                        "</div>";
+                    console.error("Coupon check error:", err);
+                });
+        }
+    </script>
+</body>
+
 </html>
