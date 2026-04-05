@@ -66,7 +66,7 @@ public class AdminController {
     @DeleteMapping("/users/{id}")
     public String deleteUser(@PathVariable Long id) {
         loginRepository.deleteById(id);
-        return "redirect:/admin/users";   // ← was /admin/dashboard
+        return "redirect:/admin/dashboard";
     }
 
     /** Displays coupon management section */
@@ -84,7 +84,7 @@ public class AdminController {
     @PostMapping("/coupons")
     public String createCoupon(@ModelAttribute Coupon coupon) {
         couponRepository.save(coupon);
-        return "redirect:/admin/coupons";   // ← was /admin/dashboard
+        return "redirect:/admin/dashboard";
     }
 
     /** Loads the coupon edit form */
@@ -106,7 +106,7 @@ public class AdminController {
     public String updateCoupon(@PathVariable Long id, @ModelAttribute Coupon coupon) {
         coupon.setId(id);
         couponRepository.save(coupon);
-        return "redirect:/admin/coupons";   // ← was /admin/dashboard
+        return "redirect:/admin/dashboard";
     }
 
     /**
@@ -116,7 +116,7 @@ public class AdminController {
     @DeleteMapping("/coupons/{id}")
     public String deleteCoupon(@PathVariable Long id) {
         couponRepository.deleteById(id);
-        return "redirect:/admin/coupons";   // ← was /admin/dashboard
+        return "redirect:/admin/dashboard";
     }
 
     /** Displays sales and analytics section */

@@ -66,7 +66,7 @@ public class SellerController {
         }
         product.setSellerName(sellerName);
         sellerService.addProduct(product);
-        return "redirect:/seller/products/" + sellerName;   // ← was /seller/dashboard/
+        return "redirect:/seller/dashboard/" + sellerName;
     }
 
     /**
@@ -86,7 +86,7 @@ public class SellerController {
         product.setId(id);
         product.setSellerName(sellerName);
         sellerService.updateProduct(product);
-        return "redirect:/seller/products/" + sellerName;   // ← was /seller/dashboard/
+        return "redirect:/seller/dashboard/" + sellerName;
     }
 
     /**
@@ -100,7 +100,7 @@ public class SellerController {
             return "redirect:/login";
         }
         sellerService.deleteProduct(id);
-        return "redirect:/seller/products/" + sellerName;   // ← was /seller/dashboard/
+        return "redirect:/seller/dashboard/" + sellerName;
     }
 
     /** Populates the model with seller dashboard data */
