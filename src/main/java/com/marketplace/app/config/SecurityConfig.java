@@ -17,7 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Service for loading user details from database
+    /**
+     * Service for loading user details from database
+     */
     private final UserDetailsServiceImpl userDetailsService;
 
     /**
@@ -76,8 +78,8 @@ public class SecurityConfig {
                 // Configure authorization for different URLs
                 .authorizeHttpRequests(auth ->
                         auth
-                                // Permit unauthenticated access to login, signup, and error page
-                                .requestMatchers("/login", "/signup", "/error")
+                                // Permit unauthenticated access to homepage, login, signup, and error page
+                                .requestMatchers("/", "/login", "/signup", "/error")
                                 .permitAll()
                                 
                                 // Restrict admin operations to ADMIN role

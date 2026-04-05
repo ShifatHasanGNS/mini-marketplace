@@ -1,0 +1,334 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Roboto", sans-serif;
+        }
+
+        /* ── Navbar ───────────────────────────────────────────── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 48px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .navbar-brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand span {
+            opacity: 0.75;
+            font-weight: 400;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-nav-outline {
+            padding: 9px 22px;
+            border: 1.5px solid rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            background: transparent;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.25s, border-color 0.25s;
+        }
+
+        .btn-nav-outline:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #fff;
+        }
+
+        .btn-nav-fill {
+            padding: 9px 22px;
+            border: none;
+            border-radius: 8px;
+            background: #fff;
+            color: #764ba2;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: opacity 0.25s, transform 0.2s;
+        }
+
+        .btn-nav-fill:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* ── Hero ─────────────────────────────────────────────── */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 24px 60px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.15;
+            max-width: 720px;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero h1 span {
+            opacity: 0.75;
+        }
+
+        .hero p {
+            font-size: clamp(15px, 2vw, 18px);
+            color: rgba(255, 255, 255, 0.82);
+            max-width: 500px;
+            line-height: 1.7;
+            margin-bottom: 40px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 64px;
+        }
+
+        .btn-primary-hero {
+            padding: 14px 36px;
+            border: none;
+            border-radius: 10px;
+            background: #fff;
+            color: #764ba2;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary-hero {
+            padding: 14px 36px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            background: transparent;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+        }
+
+        .btn-secondary-hero:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #fff;
+            transform: translateY(-3px);
+        }
+
+        /* ── Feature cards ───────────────────────────────────── */
+        .features {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 860px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.13);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            padding: 24px 28px;
+            width: 240px;
+            text-align: left;
+            backdrop-filter: blur(6px);
+            transition: transform 0.25s, background 0.25s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-icon {
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .feature-icon i {
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .feature-card h4 {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ── Footer strip ────────────────────────────────────── */
+        .footer {
+            background: rgba(0, 0, 0, 0.18);
+            text-align: center;
+            padding: 18px 24px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ── Responsive ──────────────────────────────────────── */
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 16px 20px;
+            }
+
+            .navbar-brand {
+                font-size: 17px;
+            }
+
+            .feature-card {
+                width: 100%;
+                max-width: 340px;
+            }
+        }
+    </style>
+</head>
+
+<body style="background: linear-gradient(135deg, #667eea, #764ba2); min-height: 100vh;">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a class="navbar-brand" th:href="@{/}">
+            Mini <span>Marketplace</span>
+        </a>
+        <div class="navbar-links">
+            <a class="btn-nav-outline" th:href="@{/login}">Log In</a>
+            <a class="btn-nav-fill" th:href="@{/signup}">Sign Up</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge">
+            <i class="fa-solid fa-store" style="margin-right: 6px;"></i>
+            Buy · Sell · Manage
+        </div>
+
+        <h1>Your <span>Mini</span> Marketplace<br />Starts Here</h1>
+
+        <p>
+            A simple platform where buyers discover products,
+            sellers manage their store, and admins keep everything
+            running smoothly.
+        </p>
+
+        <div class="hero-actions">
+            <a class="btn-primary-hero" th:href="@{/signup}">
+                <i class="fa-solid fa-user-plus" style="margin-right: 8px;"></i>
+                Get Started
+            </a>
+            <a class="btn-secondary-hero" th:href="@{/login}">
+                <i class="fa-solid fa-right-to-bracket" style="margin-right: 8px;"></i>
+                Log In
+            </a>
+        </div>
+
+        <!-- Feature cards -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <h4>For Buyers</h4>
+                <p>Browse products, apply coupons, and track your order history.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <h4>For Sellers</h4>
+                <p>List your products, manage inventory, and view your sales.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h4>For Admins</h4>
+                <p>Oversee users, manage coupons, and monitor platform analytics.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        &copy; 2025 Mini Marketplace. All rights reserved.
+    </footer>
+
+</body>
+
+</html>
