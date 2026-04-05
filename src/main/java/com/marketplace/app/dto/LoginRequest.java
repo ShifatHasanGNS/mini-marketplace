@@ -11,6 +11,10 @@ package com.marketplace.app.dto;
  */
 public class LoginRequest {
 
+
+    private String name;
+
+
     /**
      * Username for user authentication
      */
