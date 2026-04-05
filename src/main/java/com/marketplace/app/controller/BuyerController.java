@@ -89,6 +89,7 @@ public class BuyerController {
         }
 
         model.addAttribute("username", username);
+        model.addAttribute("cart", cart);
         model.addAttribute("cartSize", cart.size());
 
         return "buyer-dashboard";
@@ -231,7 +232,7 @@ public class BuyerController {
         List<Product> cart = (List<Product>) session.getAttribute("cart");
 
         if (cart == null || cart.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Your cart is empty.");
+            redirectAttributes.addFlashAttribute("error", "Your cart is empty.");
             return "redirect:/buyer/cart/" + username;
         }
 
@@ -269,6 +270,7 @@ public class BuyerController {
         // Clear cart
         session.removeAttribute("cart");
 
+        redirectAttributes.addFlashAttribute("success", "Order placed successfully!");
         return "redirect:/buyer/dashboard/" + username + "?success=true";
     }
 }
