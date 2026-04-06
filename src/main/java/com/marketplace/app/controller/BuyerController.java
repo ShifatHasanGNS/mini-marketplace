@@ -16,12 +16,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * BuyerController
- * 
+ *
  * Handles all buyer-side operations in the Mini Marketplace system.
  * Manages buyer dashboard, product browsing, shopping cart, order placement, and coupon application.
- * 
+ *
  * Base route: /buyer
- * 
+ *
  * @author Mini Marketplace Team
  * @version 1.0
  */
@@ -29,28 +29,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/buyer")
 public class BuyerController {
 
-    /**
-     * Repository for product operations
-     */
     private final ProductRepository productRepository;
-
-    /**
-     * Repository for coupon validation and lookup
-     */
     private final CouponRepository couponRepository;
-
-    /**
-     * Repository for order management
-     */
     private final OrderRepository orderRepository;
 
-    /**
-     * Constructor with constructor-based dependency injection
-     * 
-     * @param productRepository the ProductRepository
-     * @param couponRepository  the CouponRepository
-     * @param orderRepository   the OrderRepository
-     */
     public BuyerController(
             ProductRepository productRepository,
             CouponRepository couponRepository,
@@ -62,14 +44,8 @@ public class BuyerController {
     }
 
     /**
-     * Displays buyer dashboard with available products and order information
-     * Shows cart items, order history, total spending, and favorite sellers
-     * 
-     * @param username the buyer's username from URL path
-     * @param success  optional success message parameter
-     * @param model    the Spring model for view attributes
-     * @param session  the HttpSession for storing cart data
-     * @return buyer dashboard template
+     * Displays buyer dashboard: stats, products, and order summary.
+     * Cart/checkout is NOT shown here – the buyer must navigate to /buyer/cart to checkout.
      */
     @GetMapping("/dashboard/{username}")
     public String dashboard(
@@ -78,61 +54,49 @@ public class BuyerController {
             Model model,
             HttpSession session
     ) {
-        // Store username in session for template access
         session.setAttribute("username", username);
-        
-        // Retrieve or initialize shopping cart
+
+        // Cart size for sidebar badge only – do NOT add cart list to model here
+        // so the empty checkout form does not appear on the main dashboard
         List<Product> cart = (List<Product>) session.getAttribute("cart");
         if (cart == null) {
             cart = new ArrayList<>();
+            session.setAttribute("cart", cart);
         }
-        session.setAttribute("cart", cart);
-        model.addAttribute("cart", cart);
-        
-        // Fetch all available products for display
+
+        // Products
         List<Product> products = productRepository.findAll();
         model.addAttribute("products", products);
-        
-        // Fetch buyer's order history
+
+        // Order stats
         List<Order> orders = orderRepository.findByCustomerName(username);
-        
-        // Calculate total amount spent by buyer
         double totalSpent = orders.stream().mapToDouble(Order::getPrice).sum();
         model.addAttribute("totalSpent", totalSpent);
-        
-        // Calculate top 3 sellers by purchase frequency
+
         Map<String, Integer> sellerCount = new HashMap<>();
         for (Order o : orders) {
             sellerCount.put(o.getSellerName(), sellerCount.getOrDefault(o.getSellerName(), 0) + 1);
         }
-        List<String> topSellers = sellerCount.entrySet()
-                .stream()
+        List<String> topSellers = sellerCount.entrySet().stream()
                 .sorted((a, b) -> b.getValue() - a.getValue())
                 .limit(3)
                 .map(Map.Entry::getKey)
                 .toList();
         model.addAttribute("topSellers", topSellers);
-        
-        // Add success message if order was placed
+
         if (success != null) {
-            model.addAttribute("successMessage", "Order placed successfully!");
+            model.addAttribute("successMessage", "Order placed successfully! Check your order history.");
         }
-        
-        // Add common attributes to model
+
         model.addAttribute("username", username);
+        model.addAttribute("cart", cart);
         model.addAttribute("cartSize", cart.size());
-        
+
         return "buyer-dashboard";
     }
 
     /**
-     * Displays product list for browsing
-     * Shows all available products in the marketplace
-     * 
-     * @param username the buyer's username from URL path
-     * @param model    the Spring model for view attributes
-     * @param session  the HttpSession containing cart information
-     * @return buyer dashboard with products section active
+     * Displays all products for browsing.
      */
     @GetMapping("/products/{username}")
     public String products(
@@ -140,31 +104,20 @@ public class BuyerController {
             Model model,
             HttpSession session
     ) {
-        // Fetch all available products
         List<Product> products = productRepository.findAll();
-        
-        // Retrieve cart from session
+
         List<Product> cart = (List<Product>) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new ArrayList<>();
-        }
-        
-        // Add attributes to model
+        if (cart == null) cart = new ArrayList<>();
+
         model.addAttribute("products", products);
         model.addAttribute("cartSize", cart.size());
         model.addAttribute("username", username);
-        
+
         return "buyer-dashboard";
     }
 
     /**
-     * Displays the buyer's shopping cart
-     * Shows all items currently in the cart
-     * 
-     * @param username the buyer's username from URL path
-     * @param model    the Spring model for view attributes
-     * @param session  the HttpSession containing cart data
-     * @return buyer dashboard with cart section active
+     * Displays the shopping cart and checkout form.
      */
     @GetMapping("/cart/{username}")
     public String cart(
@@ -172,139 +125,100 @@ public class BuyerController {
             Model model,
             HttpSession session
     ) {
-        // Retrieve cart from session
         List<Product> cart = (List<Product>) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new ArrayList<>();
-        }
-        
-        // Add attributes to model
+        if (cart == null) cart = new ArrayList<>();
+
         model.addAttribute("cart", cart);
         model.addAttribute("username", username);
         model.addAttribute("cartSize", cart.size());
-        
+
         return "buyer-dashboard";
     }
 
-    /**
-     * Adds a product to the shopping cart
-     * Retrieves product by ID and adds it to the session cart
-     * 
-     * @param id       the product ID to add
-     * @param username the buyer's username from URL path
-     * @param session  the HttpSession for storing cart data
-     * @return redirect to cart page
-     */
+    /** Adds a product to the cart and redirects to cart page. */
     @GetMapping("/add-to-cart/{id}/{username}")
     public String addToCart(
             @PathVariable Long id,
             @PathVariable String username,
             HttpSession session
     ) {
-        // Retrieve product by ID
         Product product = productRepository.findById(id).orElse(null);
-        
         if (product != null) {
-            // Get cart from session and add product
             List<Product> cart = (List<Product>) session.getAttribute("cart");
-            if (cart == null) {
-                cart = new ArrayList<>();
-            }
+            if (cart == null) cart = new ArrayList<>();
             cart.add(product);
             session.setAttribute("cart", cart);
         }
-        
-        // Redirect to cart page
         return "redirect:/buyer/cart/" + username;
     }
 
-    /**
-     * Removes a product from the shopping cart
-     * Removes product by ID from session cart
-     * 
-     * @param id       the product ID to remove
-     * @param username the buyer's username from URL path
-     * @param session  the HttpSession for storing cart data
-     * @return redirect to cart page
-     */
+    /** Removes a product from the cart and redirects to cart page. */
     @GetMapping("/remove-from-cart/{id}/{username}")
     public String removeFromCart(
             @PathVariable Long id,
             @PathVariable String username,
             HttpSession session
     ) {
-        // Retrieve cart from session
         List<Product> cart = (List<Product>) session.getAttribute("cart");
-        
         if (cart != null) {
-            // Remove product with matching ID
             cart.removeIf(p -> p.getId().equals(id));
             session.setAttribute("cart", cart);
         }
-        
-        // Redirect to cart page
         return "redirect:/buyer/cart/" + username;
     }
 
     /**
-     * Displays buyer's order history
-     * Shows all orders placed by the buyer
-     * 
-     * @param username the buyer's username from URL path
-     * @param model    the Spring model for view attributes
-     * @return buyer dashboard with orders section active
+     * Displays order history.
+     * Sets cartSize so the sidebar badge works correctly.
      */
     @GetMapping("/orders/{username}")
-    public String orderHistory(@PathVariable String username, Model model) {
-        // Fetch all orders for this buyer
+    public String orderHistory(
+            @PathVariable String username,
+            Model model,
+            HttpSession session
+    ) {
         List<Order> orders = orderRepository.findByCustomerName(username);
-        
-        // Add attributes to model
+
+        List<Product> cart = (List<Product>) session.getAttribute("cart");
+        if (cart == null) cart = new ArrayList<>();
+
         model.addAttribute("orders", orders);
         model.addAttribute("username", username);
-        
+        model.addAttribute("cartSize", cart.size());   // ← was missing
+
         return "buyer-dashboard";
     }
 
     /**
-     * Validates coupon code and returns discount percentage
-     * Checks if coupon exists and is valid
-     * 
-     * @param code the coupon code to validate
-     * @return JSON response with validation status and discount percentage
+     * Validates a coupon code and returns a JSON response.
+     * Also checks if the coupon has expired.
      */
     @GetMapping("/check-coupon")
     @ResponseBody
     public Map<String, Object> checkCoupon(@RequestParam String code) {
         Map<String, Object> response = new HashMap<>();
-        
-        // Look up coupon by code
         Coupon coupon = couponRepository.findByCode(code);
-        
+
         if (coupon != null) {
-            // Coupon found - return valid status and discount
-            response.put("valid", true);
-            response.put("discount", coupon.getDiscountPercentage());
+            // Treat expired coupons as invalid
+            if (coupon.getValidUntil() != null && coupon.getValidUntil().isBefore(LocalDate.now())) {
+                response.put("valid", false);
+                response.put("message", "This coupon has expired.");
+            } else {
+                response.put("valid", true);
+                response.put("discount", coupon.getDiscountPercentage());
+            }
         } else {
-            // Coupon not found
             response.put("valid", false);
+            response.put("message", "Invalid coupon code.");
         }
-        
         return response;
     }
 
     /**
-     * Processes checkout and order placement
-     * Saves all cart items as orders with applied discount
-     * Clears cart after successful checkout
-     * 
-     * @param username   the buyer's username
-     * @param address    the delivery address
-     * @param mobile     the buyer's mobile number
-     * @param couponCode the coupon code (optional)
-     * @param session    the HttpSession containing cart data
-     * @param redirectAttributes for flash attributes
-     * @return redirect to dashboard with success message
+     * Processes checkout: saves orders, clears cart, redirects to dashboard.
+     * After this, the seller's and admin's dashboards will reflect the new orders
+     * automatically on their next page load (data is persisted to DB immediately).
      */
     @PostMapping("/checkout")
     public String checkout(
@@ -315,30 +229,29 @@ public class BuyerController {
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
-        // Retrieve cart from session
         List<Product> cart = (List<Product>) session.getAttribute("cart");
-        
-        // Validate cart is not empty
+
         if (cart == null || cart.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Cart is empty");
+            redirectAttributes.addFlashAttribute("error", "Your cart is empty.");
             return "redirect:/buyer/cart/" + username;
         }
-        
-        // Calculate discount percentage
+
+        // Resolve discount
         double discount = 0;
-        if (couponCode != null && !couponCode.isEmpty()) {
+        String appliedCoupon = null;
+        if (couponCode != null && !couponCode.isBlank()) {
             Coupon coupon = couponRepository.findByCode(couponCode);
-            if (coupon != null) {
+            if (coupon != null &&
+                    (coupon.getValidUntil() == null || !coupon.getValidUntil().isBefore(LocalDate.now()))) {
                 discount = coupon.getDiscountPercentage();
+                appliedCoupon = couponCode;
             }
         }
-        
-        // Save order for each product in cart
+
+        // Persist one Order row per cart item
         for (Product p : cart) {
-            // Calculate final price with discount applied
             double finalPrice = p.getPrice() - ((p.getPrice() * discount) / 100);
-            
-            // Create new order
+
             Order order = new Order();
             order.setCustomerName(username);
             order.setDeliveryAddress(address);
@@ -348,16 +261,15 @@ public class BuyerController {
             order.setPrice(finalPrice);
             order.setSellerName(p.getSellerName());
             order.setDiscountPercentage(discount);
+            order.setCouponCode(appliedCoupon);
             order.setOrderDate(LocalDate.now());
-            
-            // Save order to database
+
             orderRepository.save(order);
         }
-        
-        // Clear cart after successful checkout
+
+        // Clear cart
         session.removeAttribute("cart");
-        
-        // Redirect to dashboard with success message
+
         redirectAttributes.addFlashAttribute("success", "Order placed successfully!");
         return "redirect:/buyer/dashboard/" + username + "?success=true";
     }
